@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sacred Draw</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #05040a;
+    --parchment: #ede0c8;
+    --gold: #c8a45a;
+    --gold-dim: #6e5a30;
+    --gold-pale: rgba(200,164,90,0.12);
+    --ash: #100e18;
+    --cream: #ddd0b8;
+    --violet: #2a1a3a;
+    --violet-glow: rgba(120,60,180,0.08);
+    --ember: #8c2a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    min-height: 100vh;
+    background: var(--void);
+    color: var(--parchment);
+    font-family: 'Cormorant Garamond', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* deep violet aurora bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% -10%, rgba(100,40,160,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(40,10,80,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 80% 90%, rgba(180,100,20,0.06) 0%, transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* stars */
+  .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: tw var(--d) ease-in-out infinite alternate;
+    opacity: 0;
+  }
+  @keyframes tw {
+    from { opacity: 0; }
+    to { opacity: var(--o); }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 780px;
+    padding: 50px 24px 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* HEADER */
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.55em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(20px, 5vw, 32px);
+    font-weight: 400;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-align: center;
+    text-shadow: 0 0 40px rgba(200,164,90,0.2);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .sub {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--gold-dim);
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  /* sacred geometry divider */
+  .geo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0 40px;
+  }
+  .geo-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim));
+  }
+  .geo-line.r { background: linear-gradient(90deg, var(--gold-dim), transparent); }
+  .geo-symbol {
+    font-size: 14px;
+    color: var(--gold-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ASTROLOGY CHART */
+  .chart-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin-bottom: 36px;
+    flex-shrink: 0;
+  }
+
+  .chart-canvas {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+  }
+
+  .chart-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .planet-tooltip {
+    position: absolute;
+    background: rgba(5,4,10,0.92);
+    border: 1px solid var(--gold-dim);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    font-style: italic;
+    padding: 5px 10px;
+    border-radius: 3px;
+    pointer-events: none;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  /* CARD */
+  .card-wrap {
+    perspective: 1200px;
+    margin-bottom: 44px;
+  }
+
+  .card {
+    width: 168px;
+    height: 294px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+  }
+
+  .card.flipped { transform: rotateY(180deg); }
+  .card.flipped.rev { transform: rotateY(180deg) rotateZ(180deg); }
+
+  .card-back, .card-front {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .card-back {
+    background: linear-gradient(160deg, #12101e 0%, #0d0b16 100%);
+    border: 1px solid rgba(200,164,90,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* sacred geometry on back */
+  .card-back svg {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    opacity: 0.12;
+  }
+
+  .card-back::before {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(200,164,90,0.12);
+    border-radius: 7px;
+  }
+
+  .tap-hint {
+    position: absolute;
+    bottom: 16px;
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.35em;
+    color: rgba(200,164,90,0.4);
+    text-transform: uppercase;
+    animation: breathe 2.8s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .card-front {
+    background: linear-gradient(170deg, #f0e4c8 0%, #e4d4a8 100%);
+    border: 1px solid var(--gold-dim);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 14px 14px;
+    color: #1a1208;
+  }
+
+  .card-front::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(100,80,30,0.18);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+
+  .cnum {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.25em;
+    color: rgba(100,80,30,0.55);
+    align-self: flex-start;
+  }
+
+  .cglyph {
+    font-size: 68px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18));
+  }
+
+  .cname {
+    font-family: 'Cinzel', serif;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-align: center;
+    color: #2a1e08;
+    line-height: 1.5;
+  }
+
+  .crev { font-size: 8px; color: var(--ember); font-style: italic; letter-spacing: 0.15em; }
+
+  /* READING */
+  .reading {
+    width: 100%;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+    pointer-events: none;
+  }
+  .reading.show { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+  .reading-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .r-name {
+    font-family: 'Cinzel', serif;
+    font-size: 17px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .r-rev {
+    font-size: 10px;
+    color: var(--ember);
+    font-style: italic;
+    letter-spacing: 0.1em;
+  }
+
+  .r-kw {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+    margin-bottom: 6px;
+  }
+
+  /* tradition badge */
+  .tradition-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: rgba(120,60,180,0.7);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    border: 1px solid rgba(120,60,180,0.25);
+    padding: 3px 10px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    margin: 10px 0 22px;
+  }
+
+  .r-body {
+    font-size: 15.5px;
+    line-height: 1.95;
+    color: var(--cream);
+    font-weight: 300;
+    font-style: italic;
+    min-height: 80px;
+  }
+
+  .dots { display: inline-flex; gap: 5px; padding: 8px 0; }
+  .dots span {
+    width: 5px; height: 5px;
+    background: var(--gold-dim);
+    border-radius: 50%;
+    animation: dp 1.4s infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dp {
+    0%,80%,100% { opacity:0.2; transform:scale(0.7); }
+    40% { opacity:1; transform:scale(1); }
+  }
+
+  .footer-geo {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,164,90,0.2), transparent);
+    margin: 32px 0 24px;
+  }
+
+  .redraw {
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    padding: 10px 28px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    display: block;
+    margin: 0 auto;
+  }
+  .redraw:hover { border-color: var(--gold); color: var(--gold); }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(10px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  .r-body.loaded { animation: fadeUp 0.7s ease forwards; }
+
+  /* VERTICAL FLOW LAYOUT */
+  .spread-col {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* each card + its 3-line reading as a unit */
+  .card-unit {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .slot-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* inline 3-line reading below each card */
+  .inline-reading {
+    width: 100%;
+    max-width: 420px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    pointer-events: none;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .inline-reading.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  .inline-card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 4px;
+  }
+
+  .inline-tradition {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: rgba(120,60,180,0.65);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .inline-rev {
+    font-size: 9px;
+    color: var(--ember);
+    font-style: italic;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+
+  .three-lines {
+    font-size: 15px;
+    line-height: 2;
+    color: var(--cream);
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .three-lines p {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* section separator */
+  .unit-sep {
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,164,90,0.2), transparent);
+    margin: 28px 0;
+  }
+
+  /* SYNTHESIS paragraph */
+  .synthesis-block {
+    width: 100%;
+    max-width: 520px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 1s ease, transform 1s ease;
+    pointer-events: none;
+    margin-top: 8px;
+  }
+
+  .synthesis-block.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  .synthesis-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  .synthesis-text {
+    font-size: 15.5px;
+    line-height: 2;
+    color: var(--cream);
+    font-weight: 300;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .footer-sep {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,164,90,0.15), transparent);
+    margin: 36px 0 28px;
+  }
+
+  @media (max-width: 480px) {
+    .card { width: 120px; height: 210px; }
+    .cglyph { font-size: 46px !important; }
+    .cname { font-size: 8px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="wrap">
+  <div class="eyebrow">♄ · 14 April 2026 · ☽ Pisces</div>
+  <h1>The Sacred Draw</h1>
+  <div class="sub">the sacred trinity · past · present · future</div>
+
+  <div class="geo">
+    <div class="geo-line"></div>
+    <div class="geo-symbol">✡ · ☽ · 𓂀 · ✦ · 卍</div>
+    <div class="geo-line r"></div>
+  </div>
+
+  <!-- ASTROLOGY CHART -->
+  <div class="chart-label">Natal Chart · Faiz · 3 Jan 2001 · 10:00 WIB · Depok</div>
+  <div class="chart-container" style="width:320px;height:320px;margin-bottom:36px;position:relative;flex-shrink:0;">
+    <canvas class="chart-canvas" id="chartCanvas" width="320" height="320" style="position:absolute;inset:0;border-radius:50%;"></canvas>
+    <div class="planet-tooltip" id="planetTooltip"></div>
+  </div>
+  <div class="spread-col" id="spreadCol"></div>
+
+  <!-- synthesis appears after all 3 flipped -->
+  <div class="synthesis-block" id="synthesisBlock">
+    <div class="synthesis-label">✦ The Reading ✦</div>
+    <div class="synthesis-text" id="synthesisText">
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="footer-sep"></div>
+    <button class="redraw" onclick="reset()">✦ Draw Again ✦</button>
+  </div>
+</div>
+
+<script>
+// Stars
+(function(){
+  const s = document.getElementById('stars');
+  for(let i=0;i<100;i++){
+    const el = document.createElement('div');
+    el.className='star';
+    const sz = Math.random()*1.6+0.4;
+    el.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*5+2).toFixed(1)}s;--o:${(Math.random()*0.45+0.05).toFixed(2)};animation-delay:${(Math.random()*6).toFixed(1)}s;`;
+    s.appendChild(el);
+  }
+})();
+
+const DECK = [
+  { name:"The Fool", num:"0", glyph:"🜁", kw:"the sacred leap · trust beyond reason · Abrahamic surrender", tradition:"The Leap of Faith" },
+  { name:"The Magician", num:"I", glyph:"☿", kw:"divine will channelled through the hand · the prophet's instrument", tradition:"The Vessel" },
+  { name:"The High Priestess", num:"II", glyph:"☽", kw:"the hidden Torah · the veil before the sanctum · divine silence", tradition:"The Inner Sanctum" },
+  { name:"The Empress", num:"III", glyph:"♀", kw:"the divine feminine · Shekinah · the earth as sacred body", tradition:"The Holy Mother" },
+  { name:"The Emperor", num:"IV", glyph:"♂", kw:"the law given from the mountain · the father's structure", tradition:"The Divine Law" },
+  { name:"The Hierophant", num:"V", glyph:"♉", kw:"the tradition carried · the teacher between worlds · exoteric and esoteric", tradition:"The Initiated Teaching" },
+  { name:"The Lovers", num:"VI", glyph:"♊", kw:"the sacred union · the choice between two paths · divine covenant", tradition:"The Holy Covenant" },
+  { name:"The Chariot", num:"VII", glyph:"♋", kw:"the Merkabah throne · the chariot of light · spiritual discipline", tradition:"Merkabah Mysticism" },
+  { name:"Strength", num:"VIII", glyph:"♌", kw:"the tamed nafs · spiritual mastery of the lower self · the inner jihad", tradition:"The Greater Jihad" },
+  { name:"The Hermit", num:"IX", glyph:"⊕", kw:"the monk in the desert · the 40-day fast · the divine alone", tradition:"The Desert Fathers" },
+  { name:"Wheel of Fortune", num:"X", glyph:"♃", kw:"divine providence · the wheel of karma · what God turns", tradition:"Divine Providence" },
+  { name:"Justice", num:"XI", glyph:"♎", kw:"the Day of Judgement · the scales of Ma'at · cosmic reckoning", tradition:"The Final Reckoning" },
+  { name:"The Hanged Man", num:"XII", glyph:"♆", kw:"the mystic's suspension · the willful surrender · dark night of the soul", tradition:"The Dark Night" },
+  { name:"Death", num:"XIII", glyph:"♏", kw:"fanaa · the annihilation of self in the divine · ego-death as rite", tradition:"Fanaa · Sufi Annihilation" },
+  { name:"Temperance", num:"XIV", glyph:"♐", kw:"the alchemy of the soul · the angel pouring between vessels · tikkun olam", tradition:"Tikkun Olam" },
+  { name:"The Devil", num:"XV", glyph:"♑", kw:"Ahriman's grip · the Qliphoth · the shadow that binds", tradition:"Zoroastrian Shadow" },
+  { name:"The Tower", num:"XVI", glyph:"🜂", kw:"the collapse of false belief · the struck ego · revelation through ruin", tradition:"The Prophetic Strike" },
+  { name:"The Star", num:"XVII", glyph:"★", kw:"divine hope after the dark · the guiding light of Zoroaster's fire", tradition:"Ahura Mazda's Light" },
+  { name:"The Moon", num:"XVIII", glyph:"☾", kw:"the path of illusion · what obscures the divine · the subterranean soul", tradition:"The Veil of Maya" },
+  { name:"The Sun", num:"XIX", glyph:"☉", kw:"divine revelation · the light of God made visible · spiritual awakening", tradition:"The Divine Illumination" },
+  { name:"Judgement", num:"XX", glyph:"🜃", kw:"the resurrection · the trumpet of Israfil · the soul called home", tradition:"The Final Trumpet" },
+  { name:"The World", num:"XXI", glyph:"♄", kw:"the completed soul · the return to Ein Sof · the perfected mystic", tradition:"Return to Ein Sof" },
+  { name:"The Hermit", num:"IX·✦", glyph:"⊕", kw:"the seeker walking alone · the tradition carried inward · private gnosis", tradition:"The Gnostic Path" },
+  { name:"Ace of Cups", num:"Ace·♥", glyph:"🜄", kw:"the overflowing divine love · the heart as vessel for God", tradition:"Divine Love · Agape" },
+  { name:"The High Priestess", num:"II·✦", glyph:"☽", kw:"Binah · the great mother of understanding · the hidden Sephirah", tradition:"Kabbalistic Binah" },
+  { name:"The Star", num:"XVII·✦", glyph:"★", kw:"Netzach · the eternal flame of Ahura Mazda · hope as sacred act", tradition:"Zoroastrian Fire" },
+  { name:"The Magician", num:"I·✦", glyph:"☿", kw:"Kether descending · the word made flesh · divine logos", tradition:"The Divine Logos" },
+  { name:"The Tower", num:"XVI·✦", glyph:"🜂", kw:"the nigredo · the blackening before the gold · sacred dissolution", tradition:"Alchemical Nigredo" },
+  { name:"Temperance", num:"XIV·✦", glyph:"♐", kw:"the albedo · the purified soul · the third stage of becoming", tradition:"Alchemical Albedo" },
+  { name:"The Emperor", num:"IV·✦", glyph:"♂", kw:"Chokmah · the father principle · divine masculine wisdom", tradition:"Kabbalistic Chokmah" },
+  { name:"The World", num:"XXI·✦", glyph:"♄", kw:"Malkuth · the kingdom made real · heaven on earth", tradition:"Malkuth · The Kingdom" },
+  { name:"The Fool", num:"0·✦", glyph:"🜁", kw:"the ain soph aur · the limitless light before creation · pure potentiality", tradition:"Ain Soph Aur" },
+];
+
+const POSITIONS = ["The Past", "The Present", "The Future"];
+
+let deck = [];
+let revealed = [false, false, false];
+let readings = [null, null, null];
+
+const SVG_BACK = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="80" fill="none" stroke="#c8a45a" stroke-width="0.8"/>
+  <circle cx="100" cy="60" r="40" fill="none" stroke="#c8a45a" stroke-width="0.8"/>
+  <circle cx="100" cy="140" r="40" fill="none" stroke="#c8a45a" stroke-width="0.8"/>
+  <circle cx="65" cy="80" r="40" fill="none" stroke="#c8a45a" stroke-width="0.8"/>
+  <circle cx="135" cy="80" r="40" fill="none" stroke="#c8a45a" stroke-width="0.8"/>
+  <circle cx="65" cy="120" r="40" fill="none" stroke="#c8a45a" stroke-width="0.8"/>
+  <circle cx="135" cy="120" r="40" fill="none" stroke="#c8a45a" stroke-width="0.8"/>
+  <circle cx="100" cy="100" r="40" fill="none" stroke="#c8a45a" stroke-width="1.2"/>
+  <polygon points="100,30 170,150 30,150" fill="none" stroke="#c8a45a" stroke-width="0.5"/>
+  <polygon points="100,170 30,50 170,50" fill="none" stroke="#c8a45a" stroke-width="0.5"/>
+</svg>`;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickThree() {
+  const shuffled = shuffle(DECK);
+  return shuffled.slice(0, 3).map(c => ({ ...c, reversed: Math.random() < 0.25 }));
+}
+
+function buildSpread() {
+  deck = pickThree();
+  revealed = [false, false, false];
+  readings = [null, null, null];
+
+  const col = document.getElementById('spreadCol');
+  col.innerHTML = '';
+
+  // hide synthesis
+  const syn = document.getElementById('synthesisBlock');
+  syn.classList.remove('show');
+  document.getElementById('synthesisText').innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+
+  deck.forEach((card, i) => {
+    // unit wrapper
+    const unit = document.createElement('div');
+    unit.className = 'card-unit';
+
+    // position label
+    const label = document.createElement('div');
+    label.className = 'slot-label';
+    label.textContent = POSITIONS[i];
+
+    // card wrap
+    const cardWrap = document.createElement('div');
+    cardWrap.className = 'card-wrap';
+    cardWrap.style.perspective = '1200px';
+
+    const cardEl = document.createElement('div');
+    cardEl.className = 'card';
+    cardEl.id = `card-${i}`;
+    cardEl.onclick = () => flipCard(i);
+    cardEl.innerHTML = `
+      <div class="card-back">
+        ${SVG_BACK}
+        <div class="tap-hint">Touch</div>
+      </div>
+      <div class="card-front">
+        <div class="cnum">${card.num}</div>
+        <div class="cglyph">${card.glyph}</div>
+        <div class="cname">${card.name}</div>
+        <div class="crev">${card.reversed ? '⟳ reversed' : ''}</div>
+      </div>`;
+
+    cardWrap.appendChild(cardEl);
+
+    // inline reading (hidden until flipped)
+    const inlineReading = document.createElement('div');
+    inlineReading.className = 'inline-reading';
+    inlineReading.id = `inline-${i}`;
+    inlineReading.innerHTML = `
+      <div class="inline-card-name">${card.name}${card.reversed ? ' <span class="inline-rev">⟳ Reversed</span>' : ''}</div>
+      <div class="inline-tradition">${card.tradition}</div>
+      <div class="three-lines" id="lines-${i}">
+        <div class="dots"><span></span><span></span><span></span></div>
+      </div>`;
+
+    // separator (not after last)
+    const sep = document.createElement('div');
+    sep.className = 'unit-sep';
+
+    unit.appendChild(label);
+    unit.appendChild(cardWrap);
+    unit.appendChild(inlineReading);
+    col.appendChild(unit);
+    if (i < 2) col.appendChild(sep);
+  });
+}
+
+function flipCard(i) {
+  if (revealed[i]) return;
+  if (i > 0 && !revealed[i - 1]) return;
+  revealed[i] = true;
+
+  const cardEl = document.getElementById(`card-${i}`);
+  cardEl.classList.add('flipped');
+  if (deck[i].reversed) cardEl.classList.add('rev');
+  cardEl.style.cursor = 'default';
+
+  // activate chart conjunctions for this card
+  activateConjunctions(deck[i].name);
+
+  setTimeout(() => fetchLineReading(i), 700);
+}
+
+const SYSTEM = `You are a sacred oracle at the crossroads of Kabbalah, Zoroastrianism, Sufi mysticism, alchemy, and the Fourth Way. Your voice is reverent, spare, penetrating. Draw on the inner traditions — the sefirot, the nafs, fanaa, the nigredo, self-remembering, the divine names — but never name or explain these frameworks. Speak as if the querent already knows. The querent is a young Indonesian-Australian man in Sydney — Capricorn Sun, Pisces Rising, Aries Moon — navigating the tension between inherited faith, mystical yearning, and a privately-forged sacred path. Moon in Pisces. April 14, 2026.`;
+
+async function fetchLineReading(i) {
+  const card = deck[i];
+  const inlineEl = document.getElementById(`inline-${i}`);
+  inlineEl.classList.add('show');
+
+  const user = `Three-card sacred spread. Position: ${POSITIONS[i]}. Card: ${card.name}${card.reversed ? ' (Reversed)' : ''}. Tradition: ${card.tradition}. Keywords: ${card.kw}.
+
+Respond with EXACTLY 3 lines. Each line is one complete sentence. No bullet points, no numbering, no labels. Just three plain lines separated by newlines. Each line should be a distinct oracle statement about this position on the soul's journey. Spare and penetrating.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: SYSTEM,
+        messages: [{ role: "user", content: user }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || 'The veil holds here.';
+    readings[i] = text;
+
+    const linesEl = document.getElementById(`lines-${i}`);
+    // split into lines and render as <p> tags
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 3);
+    linesEl.innerHTML = lines.map(l => `<p>${l}</p>`).join('');
+    linesEl.classList.add('loaded');
+
+    // if all three revealed, fetch synthesis
+    if (revealed.every(Boolean)) {
+      setTimeout(fetchSynthesis, 600);
+    }
+  } catch {
+    document.getElementById(`lines-${i}`).textContent = 'The veil holds here.';
+  }
+}
+
+async function fetchSynthesis() {
+  const syn = document.getElementById('synthesisBlock');
+  syn.classList.add('show');
+
+  const summary = deck.map((c, i) =>
+    `${POSITIONS[i]}: ${c.name}${c.reversed ? ' (Reversed)' : ''} — ${c.tradition}`
+  ).join('. ');
+
+  const readingsSummary = readings.map((r, i) =>
+    `${POSITIONS[i]}: ${r || ''}`
+  ).join('\n\n');
+
+  const user = `The three cards have been read. Now write a single paragraph — five to seven sentences — that weaves the three positions together into one unified sacred reading. Speak to the arc of the soul's journey across Past, Present, and Future as one continuous spiritual truth. Do not name the cards again. Do not list. Flow.
+
+Cards: ${summary}
+
+Individual readings already given:
+${readingsSummary}`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: SYSTEM,
+        messages: [{ role: "user", content: user }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || 'The full vision remains veiled tonight.';
+    const el = document.getElementById('synthesisText');
+    el.innerHTML = text;
+    el.classList.add('loaded');
+  } catch {
+    document.getElementById('synthesisText').textContent = 'The full vision remains veiled tonight.';
+  }
+}
+
+// ─── ASTROLOGY CHART ────────────────────────────────────────────────────────
+
+// Faiz's natal placements (degree in zodiac 0–360, sign, house)
+const NATAL = [
+  { name:'Sun',     symbol:'☉', deg: 282.5, sign:'Capricorn',  house:10, color:'#f5c842', base:'#f5c842' },
+  { name:'Moon',    symbol:'☽', deg:  18.0, sign:'Aries',      house:1,  color:'#c8c8ff', base:'#c8c8ff' },
+  { name:'Rising',  symbol:'AC', deg: 344.0, sign:'Pisces',     house:1,  color:'#7ec8e3', base:'#7ec8e3' },
+  { name:'Mars',    symbol:'♂', deg: 221.0, sign:'Scorpio',    house:8,  color:'#e05050', base:'#e05050' },
+  { name:'Mercury', symbol:'☿', deg: 270.0, sign:'Capricorn',  house:10, color:'#b0e0b0', base:'#b0e0b0' },
+  { name:'Venus',   symbol:'♀', deg: 308.0, sign:'Aquarius',   house:11, color:'#f0a0e0', base:'#f0a0e0' },
+  { name:'Jupiter', symbol:'♃', deg:  72.0, sign:'Gemini',     house:3,  color:'#ffd580', base:'#ffd580' },
+  { name:'Saturn',  symbol:'♄', deg: 175.0, sign:'Virgo',      house:7,  color:'#a08060', base:'#a08060' },
+  { name:'Uranus',  symbol:'♅', deg: 322.0, sign:'Aquarius',   house:11, color:'#80e8ff', base:'#80e8ff' },
+  { name:'Neptune', symbol:'♆', deg: 307.0, sign:'Aquarius',   house:11, color:'#8080ff', base:'#8080ff' },
+  { name:'Pluto',   symbol:'♇', deg: 249.0, sign:'Sagittarius',house:9,  color:'#c080a0', base:'#c080a0' },
+];
+
+// Tarot card → planet conjunctions (card name fragments → boosted planets)
+const CARD_CONJUNCTIONS = {
+  'Sun':         ['Sun','Jupiter'],
+  'Moon':        ['Moon','Neptune'],
+  'Star':        ['Venus','Neptune','Uranus'],
+  'Tower':       ['Mars','Pluto','Saturn'],
+  'Devil':       ['Saturn','Pluto'],
+  'Lovers':      ['Venus','Moon'],
+  'Chariot':     ['Mars','Sun'],
+  'Strength':    ['Sun','Mars'],
+  'Hermit':      ['Saturn','Mercury'],
+  'Wheel':       ['Jupiter','Sun'],
+  'Justice':     ['Saturn','Mercury'],
+  'Hanged Man':  ['Neptune','Moon'],
+  'Death':       ['Pluto','Mars'],
+  'Temperance':  ['Jupiter','Venus'],
+  'High Priestess':['Moon','Neptune'],
+  'Empress':     ['Venus','Moon'],
+  'Emperor':     ['Sun','Saturn'],
+  'Hierophant':  ['Jupiter','Saturn'],
+  'Magician':    ['Mercury','Sun'],
+  'Fool':        ['Uranus','Sun'],
+  'Judgement':   ['Pluto','Sun'],
+  'World':       ['Saturn','Jupiter'],
+  'Cups':        ['Moon','Venus'],
+  'Swords':      ['Mars','Mercury'],
+  'Wands':       ['Sun','Mars'],
+  'Pentacles':   ['Saturn','Venus'],
+};
+
+const canvas = document.getElementById('chartCanvas');
+const ctx = canvas.getContext('2d');
+const W = 320, H = 320, CX = W/2, CY = H/2;
+canvas.width = W; canvas.height = H;
+const R_OUTER = 138, R_INNER = 88, R_PLANET = 112;
+
+let activePlanets = new Set();
+let animFrame = 0;
+let glowPulse = 0;
+let overlapT = 0; // drives overlapping circle animation
+
+function degToRad(d) { return (d - 90) * Math.PI / 180; }
+function planetXY(deg, r) {
+  const a = degToRad(deg);
+  return { x: CX + r * Math.cos(a), y: CY + r * Math.sin(a) };
+}
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+// Build a colour from all active planets blended
+function activeBlendColor(alpha) {
+  const active = NATAL.filter(p => activePlanets.has(p.name));
+  if (!active.length) return `rgba(200,164,90,${alpha})`;
+  // average RGB
+  let r=0,g=0,b=0;
+  active.forEach(p => {
+    const rgb = hexToRgb(p.color).split(',').map(Number);
+    r+=rgb[0]; g+=rgb[1]; b+=rgb[2];
+  });
+  const n = active.length;
+  return `rgba(${Math.round(r/n)},${Math.round(g/n)},${Math.round(b/n)},${alpha})`;
+}
+
+function drawChart() {
+  ctx.clearRect(0, 0, W, H);
+  glowPulse = (glowPulse + 0.018) % (Math.PI * 2);
+  overlapT  = (overlapT  + 0.008) % (Math.PI * 2);
+  const pulse   = 0.5 + 0.5 * Math.sin(glowPulse);
+  const hasActive = activePlanets.size > 0;
+
+  // ── Clip to main circle ──
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_OUTER + 2, 0, Math.PI * 2);
+  ctx.clip();
+
+  // ── Background ──
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_OUTER, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(8,6,18,0.92)';
+  ctx.fill();
+
+  // ── OVERLAPPING VESICA CIRCLES (animated) ──
+  // Three orbiting circles that overlap the central chart
+  const numCircles = hasActive ? activePlanets.size + 2 : 3;
+  const circleCount = Math.min(numCircles, 6);
+  for (let i = 0; i < circleCount; i++) {
+    const phase = overlapT + (i * Math.PI * 2) / circleCount;
+    const orbitR = hasActive ? 28 + 10 * pulse : 18;
+    const cx2 = CX + orbitR * Math.cos(phase);
+    const cy2 = CY + orbitR * Math.sin(phase);
+    const circleR = hasActive ? 72 + 14 * pulse : 60;
+
+    // pick colour from active planets or gold
+    const active = Array.from(activePlanets);
+    const pColor = active[i % active.length]
+      ? NATAL.find(p => p.name === active[i % active.length])?.color || '#c8a45a'
+      : '#c8a45a';
+    const rgb = hexToRgb(pColor);
+
+    ctx.beginPath();
+    ctx.arc(cx2, cy2, circleR, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${rgb},${hasActive ? 0.18 + 0.1 * pulse : 0.06})`;
+    ctx.lineWidth = hasActive ? 1.2 : 0.6;
+    ctx.stroke();
+
+    // vesica fill at intersection
+    if (hasActive) {
+      const grd = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, circleR);
+      grd.addColorStop(0, `rgba(${rgb},${0.04 * pulse})`);
+      grd.addColorStop(1, 'transparent');
+      ctx.fillStyle = grd;
+      ctx.fill();
+    }
+  }
+
+  // ── Flower of Life petals (always subtle) ──
+  const petalR = 42;
+  for (let i = 0; i < 6; i++) {
+    const angle = (i * Math.PI) / 3 + overlapT * 0.15;
+    const px = CX + petalR * Math.cos(angle);
+    const py = CY + petalR * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(px, py, petalR, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(200,164,90,${hasActive ? 0.10 + 0.05*pulse : 0.05})`;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  ctx.restore();
+
+  // ── Outer zodiac ring ──
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_OUTER, 0, Math.PI * 2);
+  ctx.strokeStyle = activeBlendColor(hasActive ? 0.3 + 0.1*pulse : 0.2);
+  ctx.lineWidth = 16;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_OUTER, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(8,6,18,0.5)';
+  ctx.lineWidth = 14;
+  ctx.stroke();
+
+  // ── 12 house spokes ──
+  for (let h = 0; h < 12; h++) {
+    const angle = degToRad(h * 30);
+    ctx.beginPath();
+    ctx.moveTo(CX + R_INNER * Math.cos(angle), CY + R_INNER * Math.sin(angle));
+    ctx.lineTo(CX + (R_OUTER-8) * Math.cos(angle), CY + (R_OUTER-8) * Math.sin(angle));
+    ctx.strokeStyle = 'rgba(200,164,90,0.15)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  // ── Inner wheel ring ──
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_INNER, 0, Math.PI * 2);
+  ctx.strokeStyle = activeBlendColor(hasActive ? 0.12 + 0.05*pulse : 0.06);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // ── Zodiac glyphs ──
+  const SIGNS = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let s = 0; s < 12; s++) {
+    const angle = degToRad(s * 30 + 15);
+    const rx = CX + (R_OUTER - 8) * Math.cos(angle);
+    const ry = CY + (R_OUTER - 8) * Math.sin(angle);
+    ctx.font = '9px serif';
+    ctx.fillStyle = activeBlendColor(hasActive ? 0.55 : 0.3);
+    ctx.fillText(SIGNS[s], rx, ry);
+  }
+
+  // ── Aspect lines between active planets ──
+  const active = NATAL.filter(p => activePlanets.has(p.name));
+  for (let a = 0; a < active.length; a++) {
+    for (let b = a+1; b < active.length; b++) {
+      const pa = planetXY(active[a].deg, R_PLANET * 0.74);
+      const pb = planetXY(active[b].deg, R_PLANET * 0.74);
+      const grad = ctx.createLinearGradient(pa.x, pa.y, pb.x, pb.y);
+      grad.addColorStop(0, `rgba(${hexToRgb(active[a].color)},${0.4 * pulse})`);
+      grad.addColorStop(0.5, `rgba(${hexToRgb(active[a].color)},${0.15 * pulse})`);
+      grad.addColorStop(1, `rgba(${hexToRgb(active[b].color)},${0.4 * pulse})`);
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([2, 5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  // ── Planets ──
+  NATAL.forEach(planet => {
+    const pos = planetXY(planet.deg, R_PLANET);
+    const isActive = activePlanets.has(planet.name);
+    const alpha = isActive ? 0.85 + 0.15 * pulse : 0.22;
+    const dotR = isActive ? 5 + 1.5 * pulse : 2.5;
+    const rgb = hexToRgb(planet.color);
+
+    // outer glow halo
+    if (isActive) {
+      const haloSize = 18 + 8 * pulse;
+      const grd = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, haloSize);
+      grd.addColorStop(0, `rgba(${rgb},${0.55 * pulse})`);
+      grd.addColorStop(0.4, `rgba(${rgb},${0.2 * pulse})`);
+      grd.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, haloSize, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+    }
+
+    // planet dot
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, dotR, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${rgb},${alpha})`;
+    ctx.fill();
+    if (isActive) {
+      ctx.strokeStyle = `rgba(255,255,255,${0.3 * pulse})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+
+    // symbol label
+    const labelPos = planetXY(planet.deg, R_PLANET + 16);
+    ctx.font = isActive ? `bold 11px serif` : '9px serif';
+    ctx.fillStyle = `rgba(${rgb},${alpha})`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(planet.symbol, labelPos.x, labelPos.y);
+  });
+
+  // ── Center pulse ──
+  const centerGrd = ctx.createRadialGradient(CX, CY, 0, CX, CY, 30);
+  centerGrd.addColorStop(0, activeBlendColor(hasActive ? 0.18 * pulse : 0.06 * pulse));
+  centerGrd.addColorStop(1, 'transparent');
+  ctx.beginPath();
+  ctx.arc(CX, CY, 30, 0, Math.PI * 2);
+  ctx.fillStyle = centerGrd;
+  ctx.fill();
+
+  ctx.font = 'bold 16px serif';
+  ctx.fillStyle = activeBlendColor(hasActive ? 0.4 + 0.2*pulse : 0.15);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('✦', CX, CY);
+
+  animFrame = requestAnimationFrame(drawChart);
+}
+
+function activateConjunctions(cardName) {
+  // find matching planets for this card
+  let matched = new Set();
+  for (const [key, planets] of Object.entries(CARD_CONJUNCTIONS)) {
+    if (cardName.includes(key)) {
+      planets.forEach(p => matched.add(p));
+    }
+  }
+  // merge with existing active set
+  matched.forEach(p => activePlanets.add(p));
+}
+
+// Hover tooltip
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (W / rect.width);
+  const my = (e.clientY - rect.top) * (H / rect.height);
+  const tip = document.getElementById('planetTooltip');
+  let found = null;
+  NATAL.forEach(p => {
+    const pos = planetXY(p.deg, R_PLANET);
+    const dist = Math.hypot(mx - pos.x, my - pos.y);
+    if (dist < 12) found = p;
+  });
+  if (found) {
+    tip.style.opacity = '1';
+    tip.style.left = (found.deg > 180 ? '-120px' : '14px');
+    tip.style.top = '-4px';
+    tip.style.left = `${e.clientX - rect.left + 12}px`;
+    tip.style.top = `${e.clientY - rect.top - 10}px`;
+    tip.textContent = `${found.symbol} ${found.name} · ${found.sign} · H${found.house}`;
+  } else {
+    tip.style.opacity = '0';
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  document.getElementById('planetTooltip').style.opacity = '0';
+});
+
+// Start animation
+drawChart();
+
+// ─── END ASTROLOGY CHART ─────────────────────────────────────────────────────
+
+function reset() {
+  activePlanets = new Set();
+  buildSpread();
+}
+
+buildSpread();
+</script>
+</body>
+</html>
