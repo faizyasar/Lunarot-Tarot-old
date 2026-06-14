@@ -12,7 +12,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100vh;background:var(--void);color:var(--parchment);font-family:'Cormorant Garamond',serif;display:flex;flex-direction:column;align-items:center;overflow:hidden;scroll-behavior:smooth;}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 50% -10%,rgba(100,40,160,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(40,10,80,.12) 0%,transparent 60%),radial-gradient(ellipse 50% 30% at 80% 90%,rgba(180,100,20,.06) 0%,transparent 60%);}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 50% -10%,rgba(100,40,160,.18) 0%,transparent 70%),radial-gradient(ellipse 120% 100% at 50% 120%,rgba(40,100,160,.1) 0%,transparent 60%);}
 .stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .star{position:absolute;background:white;border-radius:50%;animation:tw var(--d) ease-in-out infinite alternate;opacity:0;}
 @keyframes tw{from{opacity:0}to{opacity:var(--o)}}
@@ -79,11 +79,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .field-group{width:100%;margin:0;}
 .field-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.35em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:4px;display:block;}
 .field-hint{font-size:10px;font-style:italic;color:rgba(200,164,90,.35);margin-bottom:4px;display:block;letter-spacing:.03em;}
-input[type="date"],input[type="time"],input[type="text"]{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim);color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:14px;padding:10px 12px;letter-spacing:.05em;outline:none;transition:border-color .3s;border-radius:2px;color-scheme:dark;}
+input[type="date"],input[type="time"],input[type="text"]{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim);color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:13px;padding:10px;border-radius:4px;outline:none;}
 input:focus{border-color:var(--gold);}
 input::placeholder{color:rgba(200,164,90,.25);}
 
-.submit-btn{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.3em;padding:12px;cursor:pointer;text-transform:uppercase;transition:all .4s;margin-top:4px;position:relative;overflow:hidden;}
+.submit-btn{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.3em;padding:12px;cursor:pointer;text-transform:uppercase;position:relative;overflow:hidden;transition:color .4s cubic-bezier(.23,1,.32,1);}
 .submit-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.23,1,.32,1);z-index:-1;}
 .submit-btn:hover{color:var(--void);}
 .submit-btn:hover::before{transform:scaleX(1);}
@@ -91,7 +91,7 @@ input::placeholder{color:rgba(200,164,90,.25);}
 
 /* MAIN */
 .eyebrow{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.5em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:8px;text-align:center;}
-h1{font-family:'Cinzel',serif;font-size:clamp(18px,5vw,28px);font-weight:400;color:var(--gold);letter-spacing:.2em;text-align:center;text-shadow:0 0 40px rgba(200,164,90,.2);margin-bottom:4px;line-height:1.4;}
+h1{font-family:'Cinzel',serif;font-size:clamp(18px,5vw,28px);font-weight:400;color:var(--gold);letter-spacing:.2em;text-align:center;text-shadow:0 0 40px rgba(200,164,90,.2);margin-bottom:4px;line-height:1.2;}
 .sub{font-size:12px;font-style:italic;color:var(--gold-dim);letter-spacing:.08em;margin-bottom:12px;text-align:center;}
 .chart-label{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;text-align:center;margin-bottom:6px;}
 .chart-desc{font-size:11px;font-style:italic;color:var(--gold-dim);letter-spacing:.06em;text-align:center;margin-bottom:18px;max-width:360px;line-height:1.6;}
@@ -150,7 +150,7 @@ h1{font-family:'Cinzel',serif;font-size:clamp(18px,5vw,28px);font-weight:400;col
 .card-back::before{content:'';position:absolute;inset:7px;border:1px solid rgba(200,164,90,.09);border-radius:5px;}
 .tap-hint{position:absolute;bottom:12px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.35em;color:rgba(200,164,90,.38);text-transform:uppercase;animation:breathe 2.8s ease-in-out infinite;}
 @keyframes breathe{0%,100%{opacity:.3}50%{opacity:1}}
-.card-front{background:linear-gradient(170deg,#f0e4c8,#e4d4a8);border:1px solid var(--gold-dim);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:14px 10px 10px;color:#1a1208;}
+.card-front{background:linear-gradient(170deg,#f0e4c8,#e4d4a8);border:1px solid var(--gold-dim);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:14px 10px;transform:rotateY(0deg);}
 .card-front::before{content:'';position:absolute;inset:5px;border:1px solid rgba(100,80,30,.14);border-radius:5px;pointer-events:none;}
 .cnum{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.2em;color:rgba(100,80,30,.48);align-self:flex-start;}
 .cglyph{font-size:56px;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.14));}
@@ -191,7 +191,7 @@ h1{font-family:'Cinzel',serif;font-size:clamp(18px,5vw,28px);font-weight:400;col
   to { opacity: 1; transform: translateY(0); }
 }
 .inline-actions { opacity: 0; animation: fadeReveal 1.2s ease 0.6s forwards; display: inline-block; margin-top: 12px; }
-.inline-action { color: rgba(200,164,90,.6); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-style: italic; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .08em; transition: color .3s, text-shadow .3s; }
+.inline-action { color: rgba(200,164,90,.6); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-style: italic; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .15em; transition: color .3s; }
 .inline-action:hover { color: var(--gold); text-shadow: 0 0 10px rgba(200,164,90,.5); }
 
 @media(max-width:1023px){
@@ -268,7 +268,7 @@ h1{font-family:'Cinzel',serif;font-size:clamp(18px,5vw,28px);font-weight:400;col
   for(let i=0;i<100;i++){
     const el=document.createElement('div');el.className='star';
     const sz=Math.random()*1.6+0.4;
-    el.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*5+2).toFixed(1)}s;--o:${(Math.random()*0.45+0.05).toFixed(2)};animation-delay:${(Math.random()*6).toFixed(1)}s;`;
+    el.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*5+2).toFixed(1)}s;--o:${(Math.random()*0.45+0.05).toFixed(2)};animation:tw var(--d) ease-in-out infinite alternate;`;
     s.appendChild(el);
   }
 })();
@@ -308,16 +308,16 @@ function getRisingSign(jd,birthHour){
 const SIGN_ADJ={
   Aries:       ['ignited','sovereign','first-born','ungoverned','headlong','scorched','nascent','raw-edged','unbroken','blazing','impulsive','initiating','fierce','untamed','rushing','crackling'],
   Taurus:      ['rooted','slow-turning','earthbound','unhurried','anchored','mineral','enduring','lush','immovable','patient','sensate','verdant','weighted','solid','persistent','laden'],
-  Gemini:      ['doubled','mercurial','half-lit','mutable','edge-walking','flickering','bifurcated','restless','curious','windborne','plural','scattered','quicksilver','unresolved','circling','twice-told'],
-  Cancer:      ['tidal','shell-wearing','lunar-pulled','interior','moonlit','retreating','ancestral','soft-shelled','protective','dreaming','submerged','tender','walled','remembering','saltwater','enclosed'],
+  Gemini:      ['doubled','mercurial','half-lit','mutable','edge-walking','flickering','bifurcated','restless','curious','windborne','plural','scattered','quicksilver','unresolved','circling','twinned'],
+  Cancer:      ['tidal','shell-wearing','lunar-pulled','interior','moonlit','retreating','ancestral','soft-shelled','protective','dreaming','submerged','tender','walled','remembering','saltwater'],
   Leo:         ['gilded','sun-fixed','sovereign','heart-forward','performing','radiant','proud','generous','central','illuminated','magnanimous','warm-blooded','theatrical','glowing','named','seen'],
-  Virgo:       ['precise','discerning','grain-sorted','quiet-handed','exact','ritual','attending','mending','cleansed','analytical','devoted','fault-finding','minimal','careful','ordered','gathered'],
-  Libra:       ['suspended','weighing','wind-minded','both-sided','aesthetic','hovering','diplomatic','unresolved','harmonising','soft-spoken','mirrored','balanced','air-born','refining','considering','between'],
-  Scorpio:     ['subterranean','molten','still-water','unblinking','venom-laced','regenerating','deep-cut','obsidian','penetrating','fixed','alchemical','silent','magnetic','unearthing','relentless','unseen'],
-  Sagittarius: ['arrow-loosed','horizon-bound','fire-riding','expansive','half-wild','philosophical','wandering','truth-hungry','centauric','boundless','bright-aimed','roaming','questioning','free','overshot','becoming'],
-  Capricorn:   ['stone-built','patient-climbing','winter-born','austere','load-bearing','long-shadowed','mineral','summit-seeking','structured','disciplined','enduring','measured','reserved','ancient','earned','slow-lit'],
-  Aquarius:    ['electric','detached','future-haunted','cold-lit','visionary','estranged','signal-sending','air-fixed','alien','reforming','disconnected','crystalline','strange','remote','ahead','untouched'],
-  Pisces:      ['dissolving','oceanic','border-thin','permeable','fog-born','dreaming','everything-and-nothing','uncontained','fluid','boundaryless','surrendered','empathic','mythic','liminal','wavering','unnamed'],
+  Virgo:       ['precise','discerning','grain-sorted','quiet-handed','exact','ritual','attending','mending','cleansed','analytical','devoted','fault-finding','minimal','careful','ordered','gathering'],
+  Libra:       ['suspended','weighing','wind-minded','both-sided','aesthetic','hovering','diplomatic','unresolved','harmonising','soft-spoken','mirrored','balanced','air-born','refining','considering','gracious'],
+  Scorpio:     ['subterranean','molten','still-water','unblinking','venom-laced','regenerating','deep-cut','obsidian','penetrating','fixed','alchemical','silent','magnetic','unearthing','relentless'],
+  Sagittarius: ['arrow-loosed','horizon-bound','fire-riding','expansive','half-wild','philosophical','wandering','truth-hungry','centauric','boundless','bright-aimed','roaming','questioning','feverish'],
+  Capricorn:   ['stone-built','patient-climbing','winter-born','austere','load-bearing','long-shadowed','mineral','summit-seeking','structured','disciplined','enduring','measured','reserved','ancient'],
+  Aquarius:    ['electric','detached','future-haunted','cold-lit','visionary','estranged','signal-sending','air-fixed','alien','reforming','disconnected','crystalline','strange','remote','ahead'],
+  Pisces:      ['dissolving','oceanic','border-thin','permeable','fog-born','dreaming','everything-and-nothing','uncontained','fluid','boundaryless','surrendered','empathic','mythic','liminal','without form'],
 };
 
 const CARD_ADJ={
@@ -829,7 +829,7 @@ async function renderSynthesis(){
     return p;
   });
 
-  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 4px;font-size:8px;">·</span> <span class="inline-action" onclick="resetToIntake()">change the date</span>`;
+  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 4px;font-size:8px;">·</span> <span class="inline-action" onclick="resetToIntake()">⟲ return</span> `;
   const tempActions = document.createElement('span');
   tempActions.className = 'inline-actions';
   tempActions.style.opacity = '1';
