@@ -20,7 +20,7 @@ html,body{
   overflow:hidden !important; /* No scrolling at all */
   scroll-behavior:smooth;
 }
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 50% -10%,rgba(100,40,160,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(40,10,80,.12) 0%,transparent 60%),radial-gradient(ellipse 50% 30% at 80% 90%,rgba(180,100,20,.06) 0%,transparent 60%);}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 50% -10%,rgba(100,40,160,.18) 0%,transparent 70%),radial-gradient(ellipse 40%[...]
 
 /* FORCE HIDE ALL SCROLLBARS */
 ::-webkit-scrollbar { display: none !important; }
@@ -59,7 +59,7 @@ html, body, div, section, .main-screen, .ritual-theater, .spread-row, .synthesis
     align-items: stretch; 
     padding: 12vh 40px 10vh; 
     gap: 60px; 
-    min-height: 100vh; 
+    height: 100vh;
     max-height: 100vh;
   }
   .ritual-theater { 
@@ -79,17 +79,17 @@ html, body, div, section, .main-screen, .ritual-theater, .spread-row, .synthesis
 .field-group{width:100%;margin-bottom:20px;}
 .field-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:7px;display:block;}
 .field-hint{font-size:11px;font-style:italic;color:rgba(200,164,90,.4);margin-bottom:7px;display:block;letter-spacing:.04em;}
-input[type="date"],input[type="time"],input[type="text"]{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim);color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:15px;padding:12px 16px;letter-spacing:.05em;outline:none;transition:border-color .3s;border-radius:2px;color-scheme:dark;}
+input[type="date"],input[type="time"],input[type="text"]{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim);color:var(--parchment);font-family:'Cormorant Garamond',serif;font-[...]
 input:focus{border-color:var(--gold);}
 input::placeholder{color:rgba(200,164,90,.28);}
-.submit-btn{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.35em;padding:14px;cursor:pointer;text-transform:uppercase;transition:all .4s;margin-top:8px;position:relative;overflow:hidden;}
+.submit-btn{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.35em;padding:14px;cursor:pointer;text-transform:u[...]
 .submit-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.23,1,.32,1);z-index:-1;}
 .submit-btn:hover{color:var(--void);}
 .submit-btn:hover::before{transform:scaleX(1);}
 .error-msg{font-size:11px;color:var(--ember);font-style:italic;letter-spacing:.1em;margin-top:10px;text-align:center;min-height:16px;}
 
 .eyebrow{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.5em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:10px;text-align:center;}
-h1{font-family:'Cinzel',serif;font-size:clamp(20px,5vw,30px);font-weight:400;color:var(--gold);letter-spacing:.2em;text-align:center;text-shadow:0 0 40px rgba(200,164,90,.2);margin-bottom:6px;line-height:1.4;}
+h1{font-family:'Cinzel',serif;font-size:clamp(20px,5vw,30px);font-weight:400;color:var(--gold);letter-spacing:.2em;text-align:center;text-shadow:0 0 40px rgba(200,164,90,.2);margin-bottom:6px;line-hei[...]
 .sub{font-size:13px;font-style:italic;color:var(--gold-dim);letter-spacing:.08em;margin-bottom:10px;text-align:center;}
 .chart-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;text-align:center;margin-bottom:8px;}
 .chart-desc{font-size:12px;font-style:italic;color:var(--gold-dim);letter-spacing:.07em;text-align:center;margin-bottom:26px;max-width:400px;line-height:1.85; transition: min-height 0.3s;}
@@ -150,7 +150,7 @@ h1{font-family:'Cinzel',serif;font-size:clamp(20px,5vw,30px);font-weight:400;col
 .card-back::before{content:'';position:absolute;inset:7px;border:1px solid rgba(200,164,90,.09);border-radius:5px;}
 .tap-hint{position:absolute;bottom:13px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.35em;color:rgba(200,164,90,.38);text-transform:uppercase;animation:breathe 2.8s ease-in-out infinite;}
 @keyframes breathe{0%,100%{opacity:.3}50%{opacity:1}}
-.card-front{background:linear-gradient(170deg,#f0e4c8,#e4d4a8);border:1px solid var(--gold-dim);transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:15px 11px 11px;color:#1a1208;}
+.card-front{background:linear-gradient(170deg,#f0e4c8,#e4d4a8);border:1px solid var(--gold-dim);transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:space-be[...]
 .card-front::before{content:'';position:absolute;inset:5px;border:1px solid rgba(100,80,30,.14);border-radius:5px;pointer-events:none;}
 .cnum{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.2em;color:rgba(100,80,30,.48);align-self:flex-start;}
 .cglyph{font-size:58px;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.14));}
@@ -187,7 +187,7 @@ h1{font-family:'Cinzel',serif;font-size:clamp(20px,5vw,30px);font-weight:400;col
   </div>
 
   <div class="field-group">
-    <label class="field-label" for="timeInput">Time of Birth &nbsp;<span style="color:rgba(200,164,90,.38);font-style:italic;font-size:10px;letter-spacing:.06em;">(optional · for Rising sign)</span></label>
+    <label class="field-label" for="timeInput">Time of Birth &nbsp;<span style="color:rgba(200,164,90,.38);font-style:italic;font-size:10px;letter-spacing:.06em;">(optional · for Rising sign)</span><[...]
     <span class="field-hint">leave blank if unknown · local birth time</span>
     <input type="time" id="timeInput"/>
   </div>
@@ -240,7 +240,7 @@ h1{font-family:'Cinzel',serif;font-size:clamp(20px,5vw,30px);font-weight:400;col
   for(let i=0;i<100;i++){
     const el=document.createElement('div');el.className='star';
     const sz=Math.random()*1.6+0.4;
-    el.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*5+2).toFixed(1)}s;--o:${(Math.random()*0.45+0.05).toFixed(2)};animation-delay:${(Math.random()*6).toFixed(1)}s;`;
+    el.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*5+2).toFixed(1)}s;--o:${(Math.random()*0.45+0.05).toFixed(2)};animation-del[...]
     s.appendChild(el);
   }
 })();
@@ -280,16 +280,16 @@ function getRisingSign(jd,birthHour){
 const SIGN_ADJ={
   Aries:       ['ignited','sovereign','first-born','ungoverned','headlong','scorched','nascent','raw-edged','unbroken','blazing','impulsive','initiating','fierce','untamed','rushing','crackling'],
   Taurus:      ['rooted','slow-turning','earthbound','unhurried','anchored','mineral','enduring','lush','immovable','patient','sensate','verdant','weighted','solid','persistent','laden'],
-  Gemini:      ['doubled','mercurial','half-lit','mutable','edge-walking','flickering','bifurcated','restless','curious','windborne','plural','scattered','quicksilver','unresolved','circling','twice-told'],
-  Cancer:      ['tidal','shell-wearing','lunar-pulled','interior','moonlit','retreating','ancestral','soft-shelled','protective','dreaming','submerged','tender','walled','remembering','saltwater','enclosed'],
+  Gemini:      ['doubled','mercurial','half-lit','mutable','edge-walking','flickering','bifurcated','restless','curious','windborne','plural','scattered','quicksilver','unresolved','circling','twice-t[...]
+  Cancer:      ['tidal','shell-wearing','lunar-pulled','interior','moonlit','retreating','ancestral','soft-shelled','protective','dreaming','submerged','tender','walled','remembering','saltwater','enc[...]
   Leo:         ['gilded','sun-fixed','sovereign','heart-forward','performing','radiant','proud','generous','central','illuminated','magnanimous','warm-blooded','theatrical','glowing','named','seen'],
   Virgo:       ['precise','discerning','grain-sorted','quiet-handed','exact','ritual','attending','mending','cleansed','analytical','devoted','fault-finding','minimal','careful','ordered','gathered'],
-  Libra:       ['suspended','weighing','wind-minded','both-sided','aesthetic','hovering','diplomatic','unresolved','harmonising','soft-spoken','mirrored','balanced','air-born','refining','considering','between'],
-  Scorpio:     ['subterranean','molten','still-water','unblinking','venom-laced','regenerating','deep-cut','obsidian','penetrating','fixed','alchemical','silent','magnetic','unearthing','relentless','unseen'],
-  Sagittarius: ['arrow-loosed','horizon-bound','fire-riding','expansive','half-wild','philosophical','wandering','truth-hungry','centauric','boundless','bright-aimed','roaming','questioning','free','overshot','becoming'],
-  Capricorn:   ['stone-built','patient-climbing','winter-born','austere','load-bearing','long-shadowed','mineral','summit-seeking','structured','disciplined','enduring','measured','reserved','ancient','earned','slow-lit'],
-  Aquarius:    ['electric','detached','future-haunted','cold-lit','visionary','estranged','signal-sending','air-fixed','alien','reforming','disconnected','crystalline','strange','remote','ahead','untouched'],
-  Pisces:      ['dissolving','oceanic','border-thin','permeable','fog-born','dreaming','everything-and-nothing','uncontained','fluid','boundaryless','surrendered','empathic','mythic','liminal','wavering','unnamed'],
+  Libra:       ['suspended','weighing','wind-minded','both-sided','aesthetic','hovering','diplomatic','unresolved','harmonising','soft-spoken','mirrored','balanced','air-born','refining','considering'[...]
+  Scorpio:     ['subterranean','molten','still-water','unblinking','venom-laced','regenerating','deep-cut','obsidian','penetrating','fixed','alchemical','silent','magnetic','unearthing','relentless','[...]
+  Sagittarius: ['arrow-loosed','horizon-bound','fire-riding','expansive','half-wild','philosophical','wandering','truth-hungry','centauric','boundless','bright-aimed','roaming','questioning','free','o[...]
+  Capricorn:   ['stone-built','patient-climbing','winter-born','austere','load-bearing','long-shadowed','mineral','summit-seeking','structured','disciplined','enduring','measured','reserved','ancient'[...]
+  Aquarius:    ['electric','detached','future-haunted','cold-lit','visionary','estranged','signal-sending','air-fixed','alien','reforming','disconnected','crystalline','strange','remote','ahead','unto[...]
+  Pisces:      ['dissolving','oceanic','border-thin','permeable','fog-born','dreaming','everything-and-nothing','uncontained','fluid','boundaryless','surrendered','empathic','mythic','liminal','waveri[...]
 };
 
 const CARD_ADJ={
@@ -491,7 +491,7 @@ function buildNATAL(){
     {name:'Moon',symbol:'☽',deg:moonDeg,sign:u.moon,color:ELEMENT_COLOR[u.moon]||'#c8c8ff'},
   ];
   if(u.risingIdx!==null)NATAL_PLANETS.push({name:'Rising',symbol:'AC',deg:u.risingIdx*30,sign:u.rising,color:ELEMENT_COLOR[u.rising]||'#7ec8e3'});
-  const flavours=[{name:'Mars',symbol:'♂',speed:2.0},{name:'Venus',symbol:'♀',speed:1.6},{name:'Mercury',symbol:'☿',speed:1.1},{name:'Jupiter',symbol:'♃',speed:.08},{name:'Saturn',symbol:'♄',speed:.03}];
+  const flavours=[{name:'Mars',symbol:'♂',speed:2.0},{name:'Venus',symbol:'♀',speed:1.6},{name:'Mercury',symbol:'☿',speed:1.1},{name:'Jupiter',symbol:'♃',speed:.08},{name:'Saturn',symbol:'♄'[...]
   flavours.forEach(f=>{
     const deg=((u.jd*f.speed)%360+360)%360;
     const sign=SIGN_NAMES[Math.floor(deg/30)];
@@ -622,7 +622,7 @@ const DECK=[
   {name:"Two of Cups",      num:"II·♥", glyph:"🜄",tradition:"The Mirrored Soul"},
 ];
 
-const SVG_BACK=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="100" cy="60" r="40" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="100" cy="140" r="40" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="65" cy="80" r="40" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="135" cy="80" r="40" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="65" cy="120" r="40" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="135" cy="120" r="40" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="100" cy="100" r="40" fill="none" stroke="#c8a45a" stroke-width="1.2"/><polygon points="100,30 170,150 30,150" fill="none" stroke="#c8a45a" stroke-width=".5"/><polygon points="100,170 30,50 170,50" fill="none" stroke="#c8a45a" stroke-width=".5"/></svg>`;
+const SVG_BACK=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="100" cy="60" r="40" fill="non[...]
 
 const POSITIONS=["The Past","The Present","The Future"];
 let deck=[],revealed=[false,false,false],drawnCards=[];
@@ -823,7 +823,7 @@ async function renderSynthesis(){
   });
 
   // Calculate the structure of the choices before rendering to ensure stability
-  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">change the date</span>`;
+  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="res[...]
   const tempActions = document.createElement('span');
   tempActions.className = 'inline-actions';
   tempActions.style.opacity = '1';
@@ -861,7 +861,7 @@ function makeSynthesisParagraphs(natal, drawn){
   var a3=pick(CARD_ADJ[drawn[2].name]||['unnamed']);
   var sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']);
   var moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
-  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it.';
+  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart alre[...]
   return [single, p2];
 }
 </script>
