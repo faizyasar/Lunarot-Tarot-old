@@ -104,7 +104,6 @@ body::before {
 @keyframes strike { 0% { opacity: 0; transform: scale(1.5) translateY(-20px); filter: blur(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
 @keyframes blur-in-max { 0% { opacity: 0; filter: blur(20px); } 100% { opacity: 1; filter: blur(0); } }
 
-/* Combines the 1.25s blur entrance with a perpetual jitter */
 @keyframes blur-in-min-flicker {
   0% { opacity: 0; filter: blur(4px); }
   20% { opacity: 1; filter: blur(0); } 
@@ -136,7 +135,7 @@ body::before {
   .oracle-right { flex: 1; max-width: 650px; }
 }
 
-/* ── INTAKE (BALANCED HORROR & CINZEL) ── */
+/* ── INTAKE ── */
 .intake-title { 
   font-family: 'Onryou', 'Cinzel', serif; 
   font-size: clamp(34px, 8vw, 46px); 
@@ -245,7 +244,6 @@ h1 { font-family: 'Cinzel', serif; font-size: clamp(18px, 4vw, 28px); font-weigh
 .etch-word{color:var(--gold);text-shadow:0 0 10px rgba(200,164,90,.5);animation:esettle 1.8s ease forwards;}
 @keyframes esettle{0%{color:var(--gold);text-shadow:0 0 18px rgba(200,164,90,.9)}70%{color:#e8cca0;text-shadow:0 0 4px rgba(200,164,90,.2)}100%{color:var(--cream);text-shadow:none}}
 
-/* ── INLINE ACTIONS ── */
 .inline-actions { opacity: 0; animation: fadeReveal 1.2s ease 0.6s forwards; display: flex; justify-content: center; align-items: center; margin-top: 10px; }
 .inline-action { color: rgba(200,164,90,.6); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-style: italic; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .1em; transition: color .3s, text-shadow .3s; }
 .inline-action:hover { color: var(--gold); text-shadow: 0 0 10px rgba(200,164,90,.5); }
@@ -450,39 +448,39 @@ const CARD_SINS = {
 
 const SIN_MANIFESTATIONS = {
   'Pride': {
-    boon: "Aura of the Sovereign. Your presence commands space; doubt shatters against your absolute resolve.",
-    buff: "The Lion's Stride. You gain a surge of confidence, shielding you from criticism, though it isolates you.",
-    curse: "The Icarus Hex. Blinded by your own blinding light, you cannot see the ground rising to meet you."
+    boon: "The Sovereign's Grace. You are imbued with absolute certainty. The world bends to the weight of your presence, and doubt shatters against your skin.",
+    buff: "The Solitary Crown. You are granted immense fortitude and self-reliance, but it isolates you. You elevate yourself, but the air grows incredibly thin.",
+    curse: "The Icarus Reckoning. Your vision narrows entirely to your own brilliance. You are blinded by the light of your own making, unable to see the earth rushing to meet you."
   },
   'Greed': {
-    boon: "Midas Touch. The material world bends to enrich you; resources flow effortlessly to your open hands.",
-    buff: "The Merchant's Eye. You spot lucrative opportunities where others see dirt, driven by a restless edge.",
-    curse: "The Hollow Coin. No matter what is consumed, the hunger remains. The void cannot be filled."
+    boon: "The Golden Convergence. The material fabric of the world aligns in your favor. What you reach for is already moving toward your open hands.",
+    buff: "The Restless Hunger. You are granted the sharp, unblinking eye to see opportunity where others see dirt, but you are cursed with the inability to ever feel sated.",
+    curse: "The Hollow Ascendancy. You accumulate without end, but the vessel is cracked. You will possess everything, and it will mean absolutely nothing."
   },
   'Lust': {
-    boon: "Siren’s Grace. You are a blinding magnet for deep connection, feral inspiration, and visceral passion.",
-    buff: "The Crimson Spark. An intense wave of creative and physical energy overtakes you, overriding logic.",
-    curse: "The Drowning. Obsession entirely eclipses reason. You are consumed by the object of your fixation."
+    boon: "The Siren’s Gravity. You become a conduit for feral inspiration and visceral attraction. The world is drawn inexorably toward your center.",
+    buff: "The Crimson Fever. You are fueled by a sudden, violent passion that overrides all logic. It is a powerful engine, but it runs entirely on your own blood.",
+    curse: "The Drowning. Obsession eclipses reason. You will be entirely consumed by the object of your fixation, leaving nothing of your original self behind."
   },
   'Envy': {
-    boon: "The Piercing Eye. You see the hidden worth and secret flaws in others, granting absolute strategic clarity.",
-    buff: "The Serpent's Whisper. You are driven to outpace your rivals, fueled by a competitive, venomous edge.",
-    curse: "The Bitter Mirror. Your own blessings turn to ash as you fixate entirely on the light of another."
+    boon: "The Piercing Clarity. You are granted the terrifying ability to see the hidden worth and secret flaws in others, turning comparison into absolute strategic advantage.",
+    buff: "The Serpent's Coil. You are driven to outpace your peers, fueled by a dark, competitive venom. It propels you forward, but leaves a bitter taste in your mouth.",
+    curse: "The Ash Mirror. Your own blessings will rot before your eyes, rendered entirely invisible by your fixation on the light of another. You will starve while watching them eat."
   },
   'Gluttony': {
-    boon: "The Endless Feast. You possess the capacity to absorb every experience, turning chaos into pure nourishment.",
-    buff: "The Iron Stomach. You endure and process overwhelming amounts of stress or excess without breaking.",
-    curse: "The Leviathan's Choke. You are paralyzed by abundance, drowning in the relentless flood of your desires."
+    boon: "The Boundless Vessel. You possess the terrifying capacity to absorb every experience, metabolizing chaos and turning excess into pure, raw power.",
+    buff: "The Iron Maw. You are given the endurance to process overwhelming amounts of stress or indulgence without breaking, but you will never know when to stop.",
+    curse: "The Leviathan's Choke. You are paralyzed by abundance. The flood of your own desires will rise above your head, drowning you in the very things you craved."
   },
   'Wrath': {
-    boon: "The Righteous Sword. Your anger is a purifying fire, clearing away dead wood and striking down false idols.",
-    buff: "The Berserker's Pace. You gain the momentum to destroy obstacles in your path, sacrificing diplomacy.",
-    curse: "The Scorched Earth. The fire burns outward, consuming the guilty, the innocent, and yourself alike."
+    boon: "The Purifying Flame. Your anger becomes a precise and holy instrument. It will clear away the dead wood, striking down false idols without consuming your own foundation.",
+    buff: "The Berserker's Pyre. You are granted unstoppable momentum to annihilate the obstacles in your path, but the heat of your advance will alienate those who walk beside you.",
+    curse: "The Scorched Earth. The fire turns inward and outward at once. You will destroy the guilty and the innocent indiscriminately, leaving yourself to rule over ashes."
   },
   'Sloth': {
-    boon: "The Stone Anchor. Perfect stillness. You are immovable, conserving energy while the world exhausts itself.",
-    buff: "The Somnambulist's Shield. Urgency fails to penetrate your aura; you are completely protected by deep apathy.",
-    curse: "The Stagnant Pool. Atrophy rots the foundation. Time moves forward, but you remain trapped in the amber."
+    boon: "The Immovable Monolith. You achieve perfect, unbothered stillness. You conserve your essence while the world exhausts itself beating against your walls.",
+    buff: "The Somnambulist's Veil. Urgency fails to penetrate your aura. You are completely protected by a heavy apathy, but you watch your life pass as if through a thick fog.",
+    curse: "The Amber Entombment. Atrophy rots the foundation. Time and opportunity will continue to move forward, but you will remain forever trapped exactly where you are."
   }
 };
 
@@ -498,7 +496,7 @@ function calculateSinOutcome(drawn) {
   if (negativeCount === 1) type = 'buff';
   if (negativeCount >= 2) type = 'curse';
   
-  let title = type === 'boon' ? '✦ Boon of ' : type === 'buff' ? '✧ Buff of ' : '⍼ Curse of ';
+  let title = type === 'boon' ? '✦ THE GRACE OF ' : type === 'buff' ? '✧ THE BURDEN OF ' : '⍼ THE RECKONING OF ';
   
   return title + dominantSin.toUpperCase() + " — " + SIN_MANIFESTATIONS[dominantSin][type];
 }
@@ -809,7 +807,7 @@ async function renderSynthesis(){
     container.appendChild(p); return p;
   });
 
-  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">Again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">Change the date.</span>`;
+  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">to draw again</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">to rewrite the origin</span>`;
   const tempActions = document.createElement('div'); tempActions.className = 'inline-actions'; tempActions.style.opacity = '1'; tempActions.innerHTML = actionsHTML;
   paraEls[paraEls.length - 1].appendChild(tempActions);
 
