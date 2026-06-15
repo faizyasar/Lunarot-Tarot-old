@@ -104,10 +104,9 @@ body::before {
 @keyframes strike { 0% { opacity: 0; transform: scale(1.5) translateY(-20px); filter: blur(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
 @keyframes blur-in-max { 0% { opacity: 0; filter: blur(20px); } 100% { opacity: 1; filter: blur(0); } }
 
-/* Combines the 1.25s blur entrance with a perpetual jitter */
 @keyframes blur-in-min-flicker {
   0% { opacity: 0; filter: blur(4px); }
-  20% { opacity: 1; filter: blur(0); } /* Reaches full opacity after 1.25s */
+  20% { opacity: 1; filter: blur(0); } 
   95% { opacity: 1; filter: blur(0); text-shadow: 0 0 5px rgba(200,164,90,0.3); }
   96% { opacity: 0.4; text-shadow: 0 0 15px var(--ember); }
   98% { opacity: 0.9; text-shadow: 0 0 8px var(--gold); }
@@ -137,8 +136,26 @@ body::before {
 }
 
 /* ── INTAKE ── */
-.intake-title { font-family: 'Cinzel', serif; font-size: clamp(24px, 5vw, 38px); color: var(--gold); letter-spacing: .2em; text-align: center; text-shadow: 0 0 40px rgba(200,164,90,.2); margin-bottom: 8px; }
-.intake-sub { font-size: 13px; font-style: italic; color: var(--gold-dim); letter-spacing: .08em; text-align: center; margin-bottom: 24px; }
+.intake-title { 
+  font-family: 'Onryou', 'Cinzel', serif; 
+  font-size: clamp(34px, 8vw, 46px); 
+  color: var(--gold); 
+  letter-spacing: .15em; 
+  text-align: center; 
+  text-shadow: 0 0 30px rgba(200,164,90,.3); 
+  margin-bottom: 4px; 
+}
+.intake-sub { 
+  font-family: 'Cinzel', serif;
+  font-size: 11px; 
+  font-style: italic; 
+  color: var(--gold-dim); 
+  letter-spacing: .15em; 
+  text-transform: uppercase;
+  text-align: center; 
+  margin-bottom: 28px; 
+}
+
 .geo { display: flex; align-items: center; gap: 10px; width: 100%; margin: 10px 0 20px; max-width: 460px; }
 .geo-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim)); }
 .geo-line.r { background: linear-gradient(90deg, var(--gold-dim), transparent); }
@@ -227,7 +244,25 @@ h1 { font-family: 'Cinzel', serif; font-size: clamp(18px, 4vw, 28px); font-weigh
 .etch-word{color:var(--gold);text-shadow:0 0 10px rgba(200,164,90,.5);animation:esettle 1.8s ease forwards;}
 @keyframes esettle{0%{color:var(--gold);text-shadow:0 0 18px rgba(200,164,90,.9)}70%{color:#e8cca0;text-shadow:0 0 4px rgba(200,164,90,.2)}100%{color:var(--cream);text-shadow:none}}
 
-.inline-actions { opacity: 0; animation: fadeReveal 1.2s ease 0.6s forwards; display: block; margin-top: 10px; }
+/* ── THE SIN VERDICT BOX ── */
+.sin-verdict {
+  margin-top: 25px; padding: 16px 20px;
+  border: 1px solid rgba(140, 42, 42, 0.4);
+  background: linear-gradient(180deg, rgba(140, 42, 42, 0.05), transparent);
+  opacity: 0; transform: translateY(15px);
+  transition: opacity 1s cubic-bezier(.23,1,.32,1), transform 1s cubic-bezier(.23,1,.32,1);
+  display: flex; flex-direction: column; align-items: center;
+}
+.sin-verdict.boon { border-color: rgba(200, 164, 90, 0.4); background: linear-gradient(180deg, rgba(200, 164, 90, 0.05), transparent); }
+.sin-verdict.buff { border-color: rgba(120, 60, 180, 0.4); background: linear-gradient(180deg, rgba(120, 60, 180, 0.05), transparent); }
+.sin-verdict.visible { opacity: 1; transform: translateY(0); }
+.sin-header { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+.sin-verdict.boon .sin-header { color: var(--gold); }
+.sin-verdict.buff .sin-header { color: #a580c8; }
+.sin-verdict.curse .sin-header { color: var(--ember); }
+.sin-body { font-family: 'Cormorant Garamond', serif; font-size: 14px; line-height: 1.7; color: var(--cream); font-style: italic; text-align: center; width: 100%; }
+
+.inline-actions { opacity: 0; animation: fadeReveal 1.2s ease 0.6s forwards; display: block; margin-top: 15px; }
 .inline-action { color: rgba(200,164,90,.6); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-style: italic; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .1em; transition: color .3s, text-shadow .3s; }
 .inline-action:hover { color: var(--gold); text-shadow: 0 0 10px rgba(200,164,90,.5); }
 @keyframes fadeReveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -257,8 +292,8 @@ h1 { font-family: 'Cinzel', serif; font-size: clamp(18px, 4vw, 28px); font-weigh
 <canvas id="constellationCanvas" class="stars-canvas"></canvas>
 
 <div class="screen" id="intakeScreen">
-  <div class="intake-title">Lunarot</div>
-  <div class="intake-sub">enter the coordinates of your arrival</div>
+  <div class="intake-title" id="intakeTitle">Lunarot</div>
+  <div class="intake-sub" id="intakeSub">Invites you, to try playing with your fate.</div>
   <div class="geo"><div class="geo-line"></div><div class="geo-sym">✦</div><div class="geo-line r"></div></div>
 
   <div class="field-group">
@@ -320,9 +355,35 @@ function dismissIntro() {
   setTimeout(() => { intro.style.display = 'none'; }, 1500);
 }
 window.addEventListener('load', () => {
-  // Allow the theater to perform its rites, then dissolve
   setTimeout(dismissIntro, 9000);
+  initIdleFlicker();
 });
+
+// ── IDLE ARABIC FLICKER ────────────────────────────────────
+function initIdleFlicker() {
+  const targets = [
+    { id: 'intakeTitle', text: 'Lunarot' },
+    { id: 'intakeSub', text: 'Invites you, to try playing with your fate.' }
+  ];
+  
+  setInterval(() => {
+    if(document.getElementById('intakeScreen').classList.contains('hidden')) return;
+    
+    targets.forEach(t => {
+      const el = document.getElementById(t.id);
+      if (Math.random() < 0.4) {
+        let glitch = t.text.split('').map(c => 
+          (c.match(/[a-zA-Z]/) && Math.random() < 0.15) 
+            ? `<span style="opacity:0.8; font-family:'Cormorant Garamond'; color:var(--gold); text-shadow:0 0 10px rgba(200,164,90,0.8);">${randArabic()}</span>` 
+            : c
+        ).join('');
+        
+        el.innerHTML = glitch;
+        setTimeout(() => { el.innerHTML = t.text; }, 50 + Math.random() * 100);
+      }
+    });
+  }, 1500 + Math.random() * 1500);
+}
 
 // ── STARS ──────────────────────────────────────────────────
 (function(){
@@ -342,7 +403,7 @@ function toJD(year,month,day,hour=12){ const a=Math.floor((14-month)/12),y=year+
 function getMoonSign(jd){ const REF_JD=2451549.5,REF_SIGN=9,LUNAR=29.530589,SIGN_DAYS=LUNAR/12; const offset=Math.floor((jd-REF_JD)/SIGN_DAYS)%12; return((REF_SIGN+offset)%12+12)%12; }
 function getRisingSign(jd,birthHour){ const sunLon=(jd-2451545.0)*360/365.25; const sunSign=Math.floor(((sunLon%360)+360)%360/30); const signOffset=Math.round((birthHour-12)/2); return((sunSign+signOffset+3)%12+12)%12; }
 
-// ── LEXICON ────────────────────────────────────────────────
+// ── LEXICON & SINS ─────────────────────────────────────────
 const SIGN_ADJ={
   Aries:       ['ignited','sovereign','first-born','ungoverned','headlong','scorched','nascent','raw-edged','unbroken','blazing','impulsive','initiating','fierce','untamed','rushing','crackling'],
   Taurus:      ['rooted','slow-turning','earthbound','unhurried','anchored','mineral','enduring','lush','immovable','patient','sensate','verdant','weighted','solid','persistent','laden'],
@@ -388,6 +449,75 @@ const TEMPLATES_SYNTHESIS=[
   'The {sun} arrives {sunAdj}. The {moon} stays {moonAdj}. The three positions reveal what the chart already suspected — a {cardAdj1} life navigating a {cardAdj2} world, still translating.',
   'There is something {sunAdj} about the way it begins, and something {moonAdj} about the way it ends. The middle is what the cards name: {cardAdj1}, then {cardAdj2}, then the long silence after.',
 ];
+
+const CARD_SINS = {
+  'The Fool': 'Gluttony', 'The Magician': 'Pride', 'The High Priestess': 'Envy',
+  'The Empress': 'Lust', 'The Emperor': 'Pride', 'The Hierophant': 'Sloth',
+  'The Lovers': 'Lust', 'The Chariot': 'Pride', 'Strength': 'Pride',
+  'The Hermit': 'Sloth', 'Wheel of Fortune': 'Greed', 'Justice': 'Wrath',
+  'The Hanged Man': 'Sloth', 'Death': 'Wrath', 'Temperance': 'Gluttony',
+  'The Devil': 'Greed', 'The Tower': 'Wrath', 'The Star': 'Envy',
+  'The Moon': 'Envy', 'The Sun': 'Pride', 'Judgement': 'Wrath',
+  'The World': 'Gluttony', 'Ace of Cups': 'Lust', 'Three of Swords': 'Wrath',
+  'Five of Cups': 'Envy', 'Ten of Pentacles': 'Greed', 'Page of Wands': 'Lust',
+  'Knight of Swords': 'Wrath', 'Queen of Cups': 'Lust', 'King of Pentacles': 'Greed',
+  'Seven of Wands': 'Pride', 'Two of Cups': 'Lust'
+};
+
+const SIN_MANIFESTATIONS = {
+  'Pride': {
+    boon: "Aura of the Sovereign. Your presence commands space; doubt shatters against your absolute resolve.",
+    buff: "The Lion's Stride. You gain a surge of confidence, shielding you from criticism, though it isolates you.",
+    curse: "The Icarus Hex. Blinded by your own blinding light, you cannot see the ground rising to meet you."
+  },
+  'Greed': {
+    boon: "Midas Touch. The material world bends to enrich you; resources flow effortlessly to your open hands.",
+    buff: "The Merchant's Eye. You spot lucrative opportunities where others see dirt, driven by a restless edge.",
+    curse: "The Hollow Coin. No matter what is consumed, the hunger remains. The void cannot be filled."
+  },
+  'Lust': {
+    boon: "Siren’s Grace. You are a blinding magnet for deep connection, feral inspiration, and visceral passion.",
+    buff: "The Crimson Spark. An intense wave of creative and physical energy overtakes you, overriding logic.",
+    curse: "The Drowning. Obsession entirely eclipses reason. You are consumed by the object of your fixation."
+  },
+  'Envy': {
+    boon: "The Piercing Eye. You see the hidden worth and secret flaws in others, granting absolute strategic clarity.",
+    buff: "The Serpent's Whisper. You are driven to outpace your rivals, fueled by a competitive, venomous edge.",
+    curse: "The Bitter Mirror. Your own blessings turn to ash as you fixate entirely on the light of another."
+  },
+  'Gluttony': {
+    boon: "The Endless Feast. You possess the capacity to absorb every experience, turning chaos into pure nourishment.",
+    buff: "The Iron Stomach. You endure and process overwhelming amounts of stress or excess without breaking.",
+    curse: "The Leviathan's Choke. You are paralyzed by abundance, drowning in the relentless flood of your desires."
+  },
+  'Wrath': {
+    boon: "The Righteous Sword. Your anger is a purifying fire, clearing away dead wood and striking down false idols.",
+    buff: "The Berserker's Pace. You gain the momentum to destroy obstacles in your path, sacrificing diplomacy.",
+    curse: "The Scorched Earth. The fire burns outward, consuming the guilty, the innocent, and yourself alike."
+  },
+  'Sloth': {
+    boon: "The Stone Anchor. Perfect stillness. You are immovable, conserving energy while the world exhausts itself.",
+    buff: "The Somnambulist's Shield. Urgency fails to penetrate your aura; you are completely protected by deep apathy.",
+    curse: "The Stagnant Pool. Atrophy rots the foundation. Time moves forward, but you remain trapped in the amber."
+  }
+};
+
+function calculateSinOutcome(drawn) {
+  let sinCounts = {};
+  drawn.forEach(c => { let s = CARD_SINS[c.name] || 'Pride'; sinCounts[s] = (sinCounts[s] || 0) + 1; });
+  
+  let dominantSin = Object.keys(sinCounts).reduce((a, b) => sinCounts[a] > sinCounts[b] ? a : b);
+  if (sinCounts[dominantSin] === 1) dominantSin = CARD_SINS[drawn[1].name] || 'Pride';
+
+  let negativeCount = drawn.filter(c => c.reversed || c.broken).length;
+  let type = 'boon';
+  if (negativeCount === 1) type = 'buff';
+  if (negativeCount >= 2) type = 'curse';
+  
+  let title = type === 'boon' ? '✦ BOON OF ' : type === 'buff' ? '✧ BUFF OF ' : '⍼ CURSE OF ';
+  
+  return { sin: dominantSin, type: type, title: title + dominantSin.toUpperCase(), text: SIN_MANIFESTATIONS[dominantSin][type] };
+}
 
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function makeLine(chartSign,cardName,isReversed){
@@ -684,11 +814,33 @@ async function renderSynthesis(){
     container.appendChild(p); return p;
   });
 
-  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">change the date</span>`;
-  const tempActions = document.createElement('span'); tempActions.className = 'inline-actions'; tempActions.style.opacity = '1'; tempActions.innerHTML = actionsHTML;
-  paraEls[paraEls.length - 1].appendChild(tempActions);
+  // Calculate The Sins
+  var sinData = calculateSinOutcome(drawnCards);
+  var sinBox = document.createElement('div');
+  sinBox.className = 'sin-verdict ' + sinData.type + ' visible';
+  
+  var sHead = document.createElement('div');
+  sHead.className = 'sin-header';
+  sHead.innerHTML = sinData.title;
+  sinBox.appendChild(sHead);
+  
+  var sBody = document.createElement('div');
+  sBody.className = 'sin-body';
+  sBody.innerHTML = sinData.text;
+  sinBox.appendChild(sBody);
+  
+  container.appendChild(sinBox);
 
+  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">change the date</span>`;
+  const tempActions = document.createElement('div'); tempActions.className = 'inline-actions'; tempActions.style.opacity = '1'; tempActions.innerHTML = actionsHTML;
+  sinBox.appendChild(tempActions);
+
+  // Return all elements to darkness for the etch animation
   paraEls.forEach((p, i) => { p.classList.remove('visible'); p.setAttribute('data-text', paragraphs[i]); p.innerHTML = ''; });
+  sinBox.classList.remove('visible');
+  sBody.setAttribute('data-text', sinData.text);
+  sBody.innerHTML = '';
+  tempActions.style.display = 'none';
 
   await msDelay(800); 
   for (let i = 0; i < paraEls.length; i++) {
@@ -696,8 +848,13 @@ async function renderSynthesis(){
     await msDelay(800); 
   }
   
-  const activeActions = document.createElement('span'); activeActions.className = 'inline-actions'; activeActions.innerHTML = actionsHTML;
-  paraEls[paraEls.length - 1].appendChild(activeActions);
+  // Reveal the Sin Verdict
+  sinBox.classList.add('visible');
+  await msDelay(600);
+  await etchParagraph(sBody, sBody.getAttribute('data-text'));
+  
+  // Reveal the final choices
+  tempActions.style.display = 'block';
 }
 
 function makeSynthesisParagraphs(natal, drawn){
