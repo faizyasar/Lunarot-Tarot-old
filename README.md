@@ -3,61 +3,44 @@ A digital tarot oracle fused with natal astrology, housed within a Y2K Japanese 
 
 Live Ritual: https://faizyasar.github.io/lunarot-tarot/
 
-✨ Features
-🌌 Natal Chart Engine
-Accurate Sun Sign calculation
+Features
+  Natal Chart Engine
+  Accurate Sun Sign calculation
 
-Moon Sign via Julian Date astronomy
+  Moon Sign via Julian Date astronomy
+    Optional Rising Sign (requires birth time)
+    Additional planets (Mars, Venus, Mercury, Jupiter, Saturn) for constellation visualization
+    Real-time drifting constellation canvas with connecting lines when cards activate planetary forces
 
-Optional Rising Sign (requires birth time)
+  Tarot Ritual & The Anomaly
+    32-card curated deck (Major Arcana + selected Minors)
+    Dramatic 3-card shuffle animation with 3D perspective and physical card movement
+    Sequential reveal: Past · Present · Future
+    Reversed cards with altered interpretations
+    The Anomaly: A calculated 12% probability to draw a corrupted card that glitches, burns away, and forces the void to redraw.
+    Personalized poetic readings that weave your natal signs with each card
 
-Additional planets (Mars, Venus, Mercury, Jupiter, Saturn) for constellation visualization
+  Synthesis & Flame Etch
+    Deep "Confluence" synthesis combining Sun, Moon, and the full spread
+    Animated "flame etch" typing effect with Arabic ghost glyphs and glowing text for charged words
+    Multiple layered poetic paragraphs
 
-Real-time drifting constellation canvas with connecting lines when cards activate planetary forces
+  Immersive Atmosphere
+    Web 1.0 "Dark Workshop" (暗黒工房) visual framework
+    Deep-web cursed typography utilizing custom local bindings (Onryou & IPAexMincho)
+    Dark parchment & gold styling against a twinkling starfield void
+    Responsive design (mobile-first with desktop two-column ritual theater)
 
-🃏 Tarot Ritual & The Anomaly
-32-card curated deck (Major Arcana + selected Minors)
+  Interactions & Architecture
+    Strict No-Scroll Embedded Layout: Absolute dimensional locking and dynamic CSS scaling (--c-scale) guarantee flawless integration into external sites (such as Carrd)        without viewport stretching or double-scrolling.
+    "Draw Again" to reshuffle without resetting birth data
+    "Change the Date" to return to intake
+  
+  Fully client-side!!!!!!!!!!!
+    no backend, works offline after load
+    Touch-friendly card flips
 
-Dramatic 3-card shuffle animation with 3D perspective and physical card movement
-
-Sequential reveal: Past · Present · Future
-
-Reversed cards with altered interpretations
-
-The Anomaly: A calculated 12% probability to draw a corrupted card that glitches, burns away, and forces the void to redraw.
-
-Personalized poetic readings that weave your natal signs with each card
-
-🔥 Synthesis & Flame Etch
-Deep "Confluence" synthesis combining Sun, Moon, and the full spread
-
-Animated "flame etch" typing effect with Arabic ghost glyphs and glowing text for charged words
-
-Multiple layered poetic paragraphs
-
-🎨 Immersive Atmosphere
-Web 1.0 "Dark Workshop" (暗黒工房) visual framework
-
-Deep-web cursed typography utilizing custom local bindings (Onryou & IPAexMincho)
-
-Dark parchment & gold styling against a twinkling starfield void
-
-Responsive design (mobile-first with desktop two-column ritual theater)
-
-⚙️ Interactions & Architecture
-Strict No-Scroll Embedded Layout: Absolute dimensional locking and dynamic CSS scaling (--c-scale) guarantee flawless integration into external sites (such as Carrd) without viewport stretching or double-scrolling.
-
-"Draw Again" to reshuffle without resetting birth data
-
-"Change the Date" to return to intake
-
-Fully client-side — no backend, works offline after load
-
-Touch-friendly card flips
-
-Technical
-Pure vanilla HTML/CSS/JS (single file)
-
-Advanced CSS 3D transforms, keyframes, and visual filter manipulation
-
-Canvas-based constellation rendering
+  Technical
+    Pure vanilla HTML/CSS/JS (single file)
+    uhh Advanced CSS 3D transforms, keyframes, and visual filter manipulation
+    Canvas-based constellation rendering
