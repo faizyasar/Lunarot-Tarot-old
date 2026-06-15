@@ -448,39 +448,39 @@ const CARD_SINS = {
 
 const SIN_MANIFESTATIONS = {
   'Pride': {
-    boon: "The Sovereign's Grace. You are imbued with absolute certainty. The world bends to the weight of your presence, and doubt shatters against your skin.",
-    buff: "The Solitary Crown. You are granted immense fortitude and self-reliance, but it isolates you. You elevate yourself, but the air grows incredibly thin.",
-    curse: "The Icarus Reckoning. Your vision narrows entirely to your own brilliance. You are blinded by the light of your own making, unable to see the earth rushing to meet you."
+    boon: "You are imbued with absolute certainty. The world bends to the weight of your presence, and doubt shatters against your skin.",
+    buff: "You gain a surge of confidence, shielding you from criticism, though it isolates you. You elevate yourself, but the air grows incredibly thin.",
+    curse: "Your vision narrows entirely to your own brilliance. You are blinded by the light of your own making, unable to see the earth rushing to meet you."
   },
   'Greed': {
-    boon: "The Golden Convergence. The material fabric of the world aligns in your favor. What you reach for is already moving toward your open hands.",
-    buff: "The Restless Hunger. You are granted the sharp, unblinking eye to see opportunity where others see dirt, but you are cursed with the inability to ever feel sated.",
-    curse: "The Hollow Ascendancy. You accumulate without end, but the vessel is cracked. You will possess everything, and it will mean absolutely nothing."
+    boon: "The material fabric of the world aligns in your favor. What you reach for is already moving toward your open hands.",
+    buff: "You are granted the sharp, unblinking eye to see opportunity where others see dirt, but you are cursed with the inability to ever feel sated.",
+    curse: "You accumulate without end, but the vessel is cracked. You will possess everything, and it will mean absolutely nothing."
   },
   'Lust': {
-    boon: "The Siren’s Gravity. You become a conduit for feral inspiration and visceral attraction. The world is drawn inexorably toward your center.",
-    buff: "The Crimson Fever. You are fueled by a sudden, violent passion that overrides all logic. It is a powerful engine, but it runs entirely on your own blood.",
-    curse: "The Drowning. Obsession eclipses reason. You will be entirely consumed by the object of your fixation, leaving nothing of your original self behind."
+    boon: "You become a conduit for feral inspiration and visceral attraction. The world is drawn inexorably toward your center.",
+    buff: "You are fueled by a sudden, violent passion that overrides all logic. It is a powerful engine, but it runs entirely on your own blood.",
+    curse: "Obsession eclipses reason. You will be entirely consumed by the object of your fixation, leaving nothing of your original self behind."
   },
   'Envy': {
-    boon: "The Piercing Clarity. You are granted the terrifying ability to see the hidden worth and secret flaws in others, turning comparison into absolute strategic advantage.",
-    buff: "The Serpent's Coil. You are driven to outpace your peers, fueled by a dark, competitive venom. It propels you forward, but leaves a bitter taste in your mouth.",
-    curse: "The Ash Mirror. Your own blessings will rot before your eyes, rendered entirely invisible by your fixation on the light of another. You will starve while watching them eat."
+    boon: "You are granted the terrifying ability to see the hidden worth and secret flaws in others, turning comparison into absolute strategic advantage.",
+    buff: "You are driven to outpace your peers, fueled by a dark, competitive venom. It propels you forward, but leaves a bitter taste in your mouth.",
+    curse: "Your own blessings will rot before your eyes, rendered entirely invisible by your fixation on the light of another. You will starve while watching them eat."
   },
   'Gluttony': {
-    boon: "The Boundless Vessel. You possess the terrifying capacity to absorb every experience, metabolizing chaos and turning excess into pure, raw power.",
-    buff: "The Iron Maw. You are given the endurance to process overwhelming amounts of stress or indulgence without breaking, but you will never know when to stop.",
-    curse: "The Leviathan's Choke. You are paralyzed by abundance. The flood of your own desires will rise above your head, drowning you in the very things you craved."
+    boon: "You possess the terrifying capacity to absorb every experience, metabolizing chaos and turning excess into pure, raw power.",
+    buff: "You are given the endurance to process overwhelming amounts of stress or indulgence without breaking, but you will never know when to stop.",
+    curse: "You are paralyzed by abundance. The flood of your own desires will rise above your head, drowning you in the very things you craved."
   },
   'Wrath': {
-    boon: "The Purifying Flame. Your anger becomes a precise and holy instrument. It will clear away the dead wood, striking down false idols without consuming your own foundation.",
-    buff: "The Berserker's Pyre. You are granted unstoppable momentum to annihilate the obstacles in your path, but the heat of your advance will alienate those who walk beside you.",
-    curse: "The Scorched Earth. The fire turns inward and outward at once. You will destroy the guilty and the innocent indiscriminately, leaving yourself to rule over ashes."
+    boon: "Your anger becomes a precise and holy instrument. It will clear away the dead wood, striking down false idols without consuming your own foundation.",
+    buff: "You are granted unstoppable momentum to annihilate the obstacles in your path, but the heat of your advance will alienate those who walk beside you.",
+    curse: "The fire turns inward and outward at once. You will destroy the guilty and the innocent indiscriminately, leaving yourself to rule over ashes."
   },
   'Sloth': {
-    boon: "The Immovable Monolith. You achieve perfect, unbothered stillness. You conserve your essence while the world exhausts itself beating against your walls.",
-    buff: "The Somnambulist's Veil. Urgency fails to penetrate your aura. You are completely protected by a heavy apathy, but you watch your life pass as if through a thick fog.",
-    curse: "The Amber Entombment. Atrophy rots the foundation. Time and opportunity will continue to move forward, but you will remain forever trapped exactly where you are."
+    boon: "You achieve perfect, unbothered stillness. You conserve your essence while the world exhausts itself beating against your walls.",
+    buff: "Urgency fails to penetrate your aura. You are completely protected by a heavy apathy, but you watch your life pass as if through a thick fog.",
+    curse: "Atrophy rots the foundation. Time and opportunity will continue to move forward, but you will remain forever trapped exactly where you are."
   }
 };
 
@@ -496,9 +496,7 @@ function calculateSinOutcome(drawn) {
   if (negativeCount === 1) type = 'buff';
   if (negativeCount >= 2) type = 'curse';
   
-  let title = type === 'boon' ? '✦ THE GRACE OF ' : type === 'buff' ? '✧ THE BURDEN OF ' : '⍼ THE RECKONING OF ';
-  
-  return title + dominantSin.toUpperCase() + " — " + SIN_MANIFESTATIONS[dominantSin][type];
+  return SIN_MANIFESTATIONS[dominantSin][type];
 }
 
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
@@ -520,11 +518,11 @@ function makeSynthesisParagraphs(natal, drawn){
   var single = makeSynthesis(natal, drawn);
   var a1=pick(CARD_ADJ[drawn[0].name]||['present']), a2=pick(CARD_ADJ[drawn[1].name]||['still']), a3=pick(CARD_ADJ[drawn[2].name]||['unnamed']);
   var sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
-  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it.';
+  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it. ';
   
-  var p3 = calculateSinOutcome(drawn);
+  p2 += calculateSinOutcome(drawn);
 
-  return [single, p2, p3];
+  return [single, p2];
 }
 
 // ── NATAL STATE ────────────────────────────────────────────
