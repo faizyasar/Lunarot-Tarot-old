@@ -6,6 +6,21 @@
 <title>Lunarot · Sacred Draw</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <style>
+/* ── THE CURSED FONTS ── */
+@font-face {
+  font-family: 'IPAexMincho';
+  src: url('fonts/ipaexm.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Onryou';
+  src: url('fonts/onryou.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --void:#05040a; --parchment:#ede0c8; --gold:#c8a45a; --gold-dim:#6e5a30;
   --ash:#100e18; --cream:#ddd0b8; --ember:#8c2a2a;
@@ -143,8 +158,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .card-front::before { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(100,80,30,.14); border-radius: 5px; pointer-events: none; }
 .cnum { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: .2em; color: rgba(100,80,30,.48); align-self: flex-start; }
 .cglyph { font-size: 58px; line-height: 1; filter: drop-shadow(0 4px 10px rgba(0,0,0,.14)); }
-.cname { font-family: 'Cinzel', serif; font-size: 8.5px; letter-spacing: .1em; text-align: center; color: #2a1e08; line-height: 1.5; }
-.crev { font-size: 8px; color: var(--ember); font-style: italic; letter-spacing: .15em; }
+.cname { font-family: 'Onryou', 'Cinzel', serif; font-size: 11px; letter-spacing: .1em; text-align: center; color: #2a1e08; line-height: 1.5; }
+.crev { font-family: 'Onryou', serif; font-size: 10px; color: var(--ember); font-style: italic; letter-spacing: .15em; }
 
 /* INLINE READING */
 .inline-reading { width: 100%; max-width: 200px; opacity: 0; transform: translateY(10px); transition: opacity .8s ease, transform .8s ease; pointer-events: none; margin-top: 20px; text-align: center; }
@@ -157,7 +172,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 /* SYNTHESIS */
 .synthesis-block{ width:100%;max-width:560px;opacity:0;transition:opacity 0.8s ease; pointer-events:none; min-height: 200px; }
 .synthesis-block.show{opacity:1;pointer-events:all;}
-.synthesis-text{font-size:15px;line-height:2.05;color:var(--cream);font-weight:300;font-style:italic;text-align:center;}
+.synthesis-text{font-family:'IPAexMincho', 'Cormorant Garamond', serif; font-size:16px;line-height:2.05;color:var(--cream);font-weight:300;font-style:italic;text-align:center;}
 
 .synthesis-paragraph{margin-bottom:24px;opacity:0;transition:opacity 0.5s ease;}
 .synthesis-paragraph.visible{opacity:1;}
@@ -178,6 +193,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 input{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim);color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:15px;padding:12px 16px;border-radius:2px;}
 .submit-btn{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.35em;padding:14px;cursor:pointer;transition:all .4s;}
 .submit-btn:hover{color:var(--void);background:var(--gold);}
+.error-msg{font-family:'Onryou', serif; font-size:14px;color:var(--ember);font-style:italic;letter-spacing:.1em;margin-top:10px;text-align:center;min-height:16px;}
 
 @media(max-width:1023px){
   .spread-row{flex-direction:column;align-items:center;}
@@ -387,442 +403,4 @@ let NATAL_USER=null;
 let NATAL_PLANETS=[];
 
 const ELEMENT_COLOR={
-  Aries:'#e05050',Taurus:'#80c860',Gemini:'#f0d060',Cancer:'#7ec8e3',
-  Leo:'#f5c842',Virgo:'#b0e0b0',Libra:'#f0a0e0',Scorpio:'#c080a0',
-  Sagittarius:'#ffd580',Capricorn:'#a08060',Aquarius:'#80e8ff',Pisces:'#8080ff',
-};
-
-function hexToRgb(hex){if(!hex||hex.length<7)return'200,164,90';return parseInt(hex.slice(1,3),16)+','+parseInt(hex.slice(3,5),16)+','+parseInt(hex.slice(5,7),16);}
-
-function submitIntake(){
-  const dobVal=document.getElementById('dobInput').value;
-  const timeVal=document.getElementById('timeInput').value;
-  const nameVal=document.getElementById('nameInput').value.trim();
-  const err=document.getElementById('errorMsg');
-  if(!dobVal){err.textContent='the void requires a date of birth';return;}
-  err.textContent='';
-
-  const [year,month,day]=dobVal.split('-').map(Number);
-  let birthHour=null;
-  if(timeVal){const [h,m]=timeVal.split(':').map(Number);birthHour=h+m/60;}
-
-  const jd=toJD(year,month,day,birthHour||12);
-  const sunIdx=getSunSign(month,day);
-  const moonIdx=getMoonSign(jd);
-  const risingIdx=birthHour!==null?getRisingSign(jd,birthHour):null;
-
-  NATAL_USER={
-    sun:SIGN_NAMES[sunIdx],moon:SIGN_NAMES[moonIdx],
-    rising:risingIdx!==null?SIGN_NAMES[risingIdx]:null,
-    hasRising:risingIdx!==null,name:nameVal||null,
-    sunIdx,moonIdx,risingIdx,jd,
-  };
-
-  buildNATAL();
-
-  document.getElementById('intakeScreen').classList.add('hidden');
-  document.getElementById('mainScreen').classList.remove('hidden');
-
-  const dateStr=new Date(year,month-1,day).toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('chartEyebrow').textContent=
-    `${NATAL_USER.sun} · ${NATAL_USER.moon} Moon${NATAL_USER.rising?' · '+NATAL_USER.rising+' Rising':''}`;
-  document.getElementById('chartLabel').textContent=
-    `Natal Chart · ${NATAL_USER.name?NATAL_USER.name+' · ':''}${dateStr}`;
-
-  buildChartDesc();
-  
-  resizeCanvas();
-  cancelAnimationFrame(animFrame);
-  activePlanets=new Set();
-  t0=0;
-  drawConstellation();
-  
-  startRitual();
-}
-
-function resetToIntake(){
-  cancelAnimationFrame(animFrame);
-  document.getElementById('mainScreen').classList.add('hidden');
-  document.getElementById('intakeScreen').classList.remove('hidden');
-  document.getElementById('dobInput').value='';
-  document.getElementById('timeInput').value='';
-  document.getElementById('nameInput').value='';
-  NATAL_USER=null;activePlanets=new Set();
-  
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-async function buildChartDesc(){
-  if(!NATAL_USER)return;
-  const sa=pick(SIGN_ADJ[NATAL_USER.sun]),ma=pick(SIGN_ADJ[NATAL_USER.moon]);
-  let d=`${NATAL_USER.sun} sun — ${sa} · ${NATAL_USER.moon} moon — ${ma}`;
-  if(NATAL_USER.rising){const ra=pick(SIGN_ADJ[NATAL_USER.rising]);d+=` · ${NATAL_USER.rising} rising — ${ra}`;}
-  
-  const descEl = document.getElementById('chartDesc');
-  
-  // Pre-calculate height to prevent layout shudder
-  descEl.style.minHeight = '0px';
-  descEl.innerHTML = d;
-  const stableHeight = descEl.offsetHeight;
-  descEl.style.minHeight = stableHeight + 'px';
-  
-  descEl.innerHTML = '';
-  await etchParagraph(descEl, d);
-}
-
-function buildNATAL(){
-  if(!NATAL_USER)return;
-  const u=NATAL_USER;
-  const sunDeg=u.sunIdx*30+15,moonDeg=u.moonIdx*30+15;
-  NATAL_PLANETS=[
-    {name:'Sun', symbol:'☉',deg:sunDeg, sign:u.sun, color:ELEMENT_COLOR[u.sun]||'#f5c842'},
-    {name:'Moon',symbol:'☽',deg:moonDeg,sign:u.moon,color:ELEMENT_COLOR[u.moon]||'#c8c8ff'},
-  ];
-  if(u.risingIdx!==null)NATAL_PLANETS.push({name:'Rising',symbol:'AC',deg:u.risingIdx*30,sign:u.rising,color:ELEMENT_COLOR[u.rising]||'#7ec8e3'});
-  const flavours=[{name:'Mars',symbol:'♂',speed:2.0},{name:'Venus',symbol:'♀',speed:1.6},{name:'Mercury',symbol:'☿',speed:1.1},{name:'Jupiter',symbol:'♃',speed:.08},{name:'Saturn',symbol:'♄',speed:.03}];
-  flavours.forEach(f=>{
-    const deg=((u.jd*f.speed)%360+360)%360;
-    const sign=SIGN_NAMES[Math.floor(deg/30)];
-    NATAL_PLANETS.push({name:f.name,symbol:f.symbol,deg,sign,color:ELEMENT_COLOR[sign]||'#c8a45a'});
-  });
-}
-
-// ── CONSTELLATION CANVAS ───────────────────────────────────
-const cCanvas = document.getElementById('constellationCanvas');
-const cCtx = cCanvas.getContext('2d');
-let cw, ch;
-let activePlanets=new Set(), animFrame=0;
-let t0=0;
-
-function resizeCanvas() {
-  cw = window.innerWidth;
-  ch = window.innerHeight;
-  cCanvas.width = cw;
-  cCanvas.height = ch;
-}
-window.addEventListener('resize', resizeCanvas);
-
-function drawConstellation() {
-  cCtx.clearRect(0, 0, cw, ch);
-  t0 += 0.0015;
-
-  const cx = cw / 2;
-  const cy = ch / 2;
-  
-  const rx = cw * 0.45; 
-  const ry = ch * 0.45;
-
-  const activeNodes = [];
-
-  NATAL_PLANETS.forEach(p => {
-    const isActive = activePlanets.has(p.name);
-    const driftDeg = p.deg + (t0 * 15); 
-    const rad = (driftDeg - 90) * Math.PI / 180;
-    
-    const px = cx + rx * Math.cos(rad);
-    const py = cy + ry * Math.sin(rad);
-
-    if (isActive) activeNodes.push({ x: px, y: py, color: p.color });
-
-    const alpha = isActive ? 0.9 : 0.15;
-    const size = isActive ? 3 : 1.5;
-    
-    cCtx.beginPath();
-    cCtx.arc(px, py, size, 0, Math.PI * 2);
-    cCtx.fillStyle = `rgba(${hexToRgb(p.color)}, ${alpha})`;
-    cCtx.fill();
-
-    if (isActive) {
-      cCtx.font = '12px "Cormorant Garamond", serif';
-      cCtx.fillStyle = `rgba(${hexToRgb(p.color)}, 0.8)`;
-      cCtx.textAlign = 'center';
-      cCtx.fillText(p.symbol, px, py - 12);
-    }
-  });
-
-  if (activeNodes.length > 1) {
-    cCtx.beginPath();
-    cCtx.moveTo(activeNodes[0].x, activeNodes[0].y);
-    for (let i = 1; i < activeNodes.length; i++) {
-      cCtx.lineTo(activeNodes[i].x, activeNodes[i].y);
-    }
-    if (activeNodes.length > 2) {
-      cCtx.lineTo(activeNodes[0].x, activeNodes[0].y);
-    }
-    
-    const pulse = 0.15 + 0.15 * Math.sin(Date.now() / 800);
-    cCtx.strokeStyle = `rgba(200, 164, 90, ${pulse})`;
-    cCtx.lineWidth = 1;
-    cCtx.setLineDash([4, 8]);
-    cCtx.stroke();
-    cCtx.setLineDash([]);
-  }
-
-  animFrame = requestAnimationFrame(drawConstellation);
-}
-
-const CARD_CONJ={
-  'Sun':['Sun'],'Moon':['Moon'],'Star':['Venus','Moon'],'Tower':['Mars','Saturn'],
-  'Devil':['Saturn'],'Lovers':['Venus','Moon'],'Chariot':['Mars','Sun'],
-  'Strength':['Sun','Mars'],'Hermit':['Saturn','Mercury'],'Wheel':['Jupiter','Sun'],
-  'Justice':['Saturn','Mercury'],'Hanged':['Moon'],'Death':['Mars'],
-  'Temperance':['Jupiter','Venus'],'Priestess':['Moon'],'Empress':['Venus','Moon'],
-  'Emperor':['Sun','Saturn'],'Hierophant':['Jupiter','Saturn'],
-  'Magician':['Mercury','Sun'],'Fool':['Sun'],'Judgement':['Sun'],
-  'World':['Saturn','Jupiter'],'Cups':['Moon','Venus'],'Swords':['Mars','Mercury'],
-  'Wands':['Sun','Mars'],'Pentacles':['Saturn','Venus'],
-};
-function activateConj(cardName){for(const[k,ps]of Object.entries(CARD_CONJ))if(cardName.includes(k))ps.forEach(p=>activePlanets.add(p));}
-
-// ── DECK ───────────────────────────────────────────────────
-const DECK=[
-  {name:"The Fool",         num:"0",     glyph:"🜁",tradition:"The Leap of Faith"},
-  {name:"The Magician",     num:"I",     glyph:"☿",tradition:"The Vessel"},
-  {name:"The High Priestess",num:"II",   glyph:"☽",tradition:"The Inner Sanctum"},
-  {name:"The Empress",      num:"III",   glyph:"♀",tradition:"The Holy Mother"},
-  {name:"The Emperor",      num:"IV",    glyph:"♂",tradition:"The Divine Law"},
-  {name:"The Hierophant",   num:"V",     glyph:"♉",tradition:"The Initiated Teaching"},
-  {name:"The Lovers",       num:"VI",    glyph:"♊",tradition:"The Holy Covenant"},
-  {name:"The Chariot",      num:"VII",   glyph:"♋",tradition:"Merkabah Mysticism"},
-  {name:"Strength",         num:"VIII",  glyph:"♌",tradition:"The Greater Jihad"},
-  {name:"The Hermit",       num:"IX",    glyph:"⊕",tradition:"The Desert Fathers"},
-  {name:"Wheel of Fortune", num:"X",     glyph:"♃",tradition:"Divine Providence"},
-  {name:"Justice",          num:"XI",    glyph:"♎",tradition:"The Final Reckoning"},
-  {name:"The Hanged Man",   num:"XII",   glyph:"♆",tradition:"The Dark Night"},
-  {name:"Death",            num:"XIII",  glyph:"♏",tradition:"Fanaa · Sufi Annihilation"},
-  {name:"Temperance",       num:"XIV",   glyph:"♐",tradition:"Tikkun Olam"},
-  {name:"The Devil",        num:"XV",    glyph:"♑",tradition:"Zoroastrian Shadow"},
-  {name:"The Tower",        num:"XVI",   glyph:"🜂",tradition:"The Prophetic Strike"},
-  {name:"The Star",         num:"XVII",  glyph:"★",tradition:"Ahura Mazda's Light"},
-  {name:"The Moon",         num:"XVIII", glyph:"☾",tradition:"The Veil of Maya"},
-  {name:"The Sun",          num:"XIX",   glyph:"☉",tradition:"The Divine Illumination"},
-  {name:"Judgement",        num:"XX",    glyph:"🜃",tradition:"The Final Trumpet"},
-  {name:"The World",        num:"XXI",   glyph:"♄",tradition:"Return to Ein Sof"},
-  {name:"Ace of Cups",      num:"A·♥",  glyph:"🜄",tradition:"Divine Love · Agape"},
-  {name:"Three of Swords",  num:"III·⚔",glyph:"△",tradition:"The Pierced Heart"},
-  {name:"Five of Cups",     num:"V·♥",  glyph:"🜄",tradition:"The Spilled and Standing"},
-  {name:"Ten of Pentacles", num:"X·◈",  glyph:"◈",tradition:"The Living Legacy"},
-  {name:"Page of Wands",    num:"P·🔥", glyph:"🜂",tradition:"The Unlit Torch"},
-  {name:"Knight of Swords", num:"Kn·⚔", glyph:"⚔",tradition:"Truth at Speed"},
-  {name:"Queen of Cups",    num:"Q·♥",  glyph:"🜄",tradition:"The Throne of Empathy"},
-  {name:"King of Pentacles",num:"K·◈",  glyph:"◈",tradition:"The Patient Empire"},
-  {name:"Seven of Wands",   num:"VII·🔥",glyph:"🜂",tradition:"The Defended Summit"},
-  {name:"Two of Cups",      num:"II·♥", glyph:"🜄",tradition:"The Mirrored Soul"},
-];
-
-const SVG_BACK=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="100" cy="100" r="40" fill="none" stroke="#c8a45a" stroke-width="1.2"/><polygon points="100,30 170,150 30,150" fill="none" stroke="#c8a45a" stroke-width=".5"/></svg>`;
-
-const POSITIONS=["The Past","The Present","The Future"];
-let deck=[],revealed=[false,false,false],drawnCards=[];
-
-function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
-
-async function startRitual() {
-  const stage = document.getElementById('shuffleStage');
-  const spread = document.getElementById('spreadRow');
-  const syn = document.getElementById('synthesisBlock');
-  
-  let hasOldContent = spread.innerHTML.trim() !== '';
-
-  if (hasOldContent) {
-    if (window.innerWidth < 1024) {
-       document.getElementById('mainScreen').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    await msDelay(600);
-    
-    spread.classList.add('faded');
-    syn.classList.remove('show');
-    await msDelay(800);
-  }
-
-  spread.innerHTML = '';
-  document.getElementById('synthesisText').innerHTML = '';
-  
-  document.querySelectorAll('.shuffle-card').forEach(el => el.innerHTML = SVG_BACK);
-  
-  stage.style.display = 'block';
-  void stage.offsetWidth; // Force mechanical reflow to apply display block
-  stage.style.opacity = '1';
-  
-  await msDelay(2200);
-  
-  stage.style.opacity = '0';
-  await msDelay(400);
-  
-  stage.style.display = 'none';
-  spread.classList.remove('faded');
-  
-  buildSpread();
-}
-
-function buildSpread(){
-  activePlanets=new Set();
-  deck=shuffle(DECK).slice(0,3).map(c=>({...c,reversed:Math.random()<.25}));
-  revealed=[false,false,false];drawnCards=[];
-  
-  const row=document.getElementById('spreadRow');
-  row.innerHTML='';
-
-  deck.forEach((card,i)=>{
-    const unit=document.createElement('div');
-    unit.className='card-unit loaded';
-    unit.id='cardWrap-' + i;
-    unit.style.animationDelay=(i*0.2)+'s';
-    
-    unit.innerHTML=`
-      <div class="slot-label">${POSITIONS[i]}</div>
-      <div class="card-wrap" id="wrap-${i}">
-        <div class="card" id="card-${i}" onclick="flipCard(${i})">
-          <div class="card-back">${SVG_BACK}<div class="tap-hint">Touch</div></div>
-          <div class="card-front">
-            <div class="cnum">${card.num}</div>
-            <div class="cglyph">${card.glyph}</div>
-            <div class="cname">${card.name}</div>
-            <div class="crev">${card.reversed?'⟳ reversed':''}</div>
-          </div>
-        </div>
-      </div>
-      <div class="inline-reading" id="inline-${i}">
-        <div class="inline-card-name">${card.name}${card.reversed?' <span style="font-size:9px;color:var(--ember);font-style:italic;">⟳</span>':''}</div>
-        <div class="inline-tradition">${card.tradition}</div>
-        <div class="three-lines" id="lines-${i}"></div>
-      </div>
-    `;
-    row.appendChild(unit);
-  });
-  
-  setTimeout(() => {
-    deck.forEach((_, i) => {
-      const wrap = document.getElementById(`wrap-${i}`);
-      if (wrap) {
-        const skewX = (Math.random() - 0.5) * 24; 
-        const skewY = (Math.random() - 0.5) * 24;
-        const rotation = (Math.random() - 0.5) * 14;
-        wrap.style.transform = `translate(${skewX}px, ${skewY}px) rotate(${rotation}deg)`;
-      }
-    });
-  }, 50);
-}
-
-function flipCard(i){
-  if(revealed[i]||(i>0&&!revealed[i-1])) return;
-  revealed[i]=true; drawnCards.push(deck[i]);
-  const el=document.getElementById(`card-${i}`);
-  
-  el.classList.add('flipped');
-  if(deck[i].reversed) el.classList.add('rev');
-  el.style.cursor='default';
-  
-  activateConj(deck[i].name);
-  setTimeout(()=>renderLines(i),700);
-}
-
-function renderLines(i){
-  const card=deck[i];
-  document.getElementById(`inline-${i}`).classList.add('show');
-  const signs=[NATAL_USER.sun, NATAL_USER.moon, NATAL_USER.rising||NATAL_USER.sun];
-  const linesEl=document.getElementById(`lines-${i}`);
-  const lines=signs.map(s=>makeLine(s,card.name,card.reversed));
-  linesEl.innerHTML=lines.map(l=>`<p>${l}</p>`).join('');
-  linesEl.classList.add('loaded');
-  if(revealed.every(Boolean))setTimeout(renderSynthesis,500);
-}
-
-// ── ADJECTIVE DETECTION for flame etch ──
-var ALL_ADJ_SET = null;
-function getAllAdjs(){
-  if(ALL_ADJ_SET) return ALL_ADJ_SET;
-  ALL_ADJ_SET = {};
-  Object.values(SIGN_ADJ).forEach(function(arr){ arr.forEach(function(w){ ALL_ADJ_SET[w]=1; }); });
-  Object.values(CARD_ADJ).forEach(function(arr){ arr.forEach(function(w){ ALL_ADJ_SET[w]=1; }); });
-  return ALL_ADJ_SET;
-}
-function isCharged(word){
-  var clean=word.toLowerCase().replace(/[^a-z-]/g,'');
-  var adjs=getAllAdjs();
-  if(adjs[clean]) return true;
-  if(clean.indexOf('-')>-1 && clean.length>5) return true;
-  return false;
-}
-
-var ARABIC="ابتثجحخدذرزسشصضطظعغفقكلمنهوي";
-function randArabic(){ return ARABIC[Math.floor(Math.random()*ARABIC.length)]; }
-function msDelay(ms){ return new Promise(function(r){setTimeout(r,ms);}); }
-
-async function etchParagraph(el, text){
-  el.classList.add('visible');
-  el.innerHTML='';
-  var words=text.split(' ');
-  var rendered='';
-  for(var w=0;w<words.length;w++){
-    var word=words[w];
-    var clean=word.toLowerCase().replace(/[^a-z-]/g,'');
-    var charged=isCharged(clean);
-    if(charged){
-      el.innerHTML=rendered+'<span class="etch-cursor">▌</span>';
-      await msDelay(160+Math.floor(Math.random()*120));
-      var flickCount=6+Math.floor(Math.random()*6);
-      for(var f=0;f<flickCount;f++){
-        var ghost=word.split('').map(function(c){return c.match(/[a-zA-Z]/)?randArabic():c;}).join('');
-        el.innerHTML=rendered+'<span class="etch-ghost">'+ghost+'</span><span class="etch-cursor">▌</span>';
-        await msDelay(32+Math.floor(Math.random()*28));
-      }
-      el.innerHTML=rendered+'<span class="etch-ghost">'+word+'</span><span class="etch-cursor">▌</span>';
-      await msDelay(80+Math.floor(Math.random()*60));
-      rendered+='<span class="etch-word">'+word+'</span> ';
-      el.innerHTML=rendered+'<span class="etch-cursor">▌</span>';
-      await msDelay(50+Math.floor(Math.random()*40));
-    } else {
-      rendered+=word+' ';
-      el.innerHTML=rendered+'<span class="etch-cursor">▌</span>';
-      if(word.match(/[,;:—]/)){
-        await msDelay(100+Math.floor(Math.random()*80));
-      } else if(word.match(/[.!?]$/)){
-        el.innerHTML=rendered;
-        await msDelay(480+Math.floor(Math.random()*200));
-        el.innerHTML=rendered+'<span class="etch-cursor">▌</span>';
-        await msDelay(60);
-      } else {
-        await msDelay(16+Math.floor(Math.random()*12));
-      }
-    }
-  }
-  el.innerHTML=rendered.trim();
-}
-
-async function renderSynthesis(){
-  const syn=document.getElementById('synthesisBlock'), con=document.getElementById('synthesisText');
-  syn.classList.add('show');
-  
-  const paragraphs = makeSynthesisParagraphs(NATAL_USER, drawnCards);
-  con.innerHTML = '';
-  
-  for(let text of paragraphs) {
-    const p = document.createElement('div');
-    p.className = 'synthesis-paragraph';
-    con.appendChild(p);
-    await etchParagraph(p, text);
-  }
-
-  // The choices now drift into existence at the end of the text
-  const actions = document.createElement('span');
-  actions.className = 'inline-actions';
-  actions.innerHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> · <span class="inline-action" onclick="resetToIntake()">change the date</span>`;
-  con.appendChild(actions);
-}
-
-function makeSynthesisParagraphs(natal, drawn){
-  var single = makeSynthesis(natal, drawn);
-  var a1=pick(CARD_ADJ[drawn[0].name]||['present']);
-  var a2=pick(CARD_ADJ[drawn[1].name]||['still']);
-  var a3=pick(CARD_ADJ[drawn[2].name]||['unnamed']);
-  var sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']);
-  var moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
-  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it.';
-  return [single, p2];
-}
-</script>
-</body>
-</html>
+  Aries:'#e05050',Taurus:'#80c860',Gemini:'#f0d060',Cancer:'#7ec8
