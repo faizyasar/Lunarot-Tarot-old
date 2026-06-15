@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Lunarot · Sacred Draw</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -13,7 +13,6 @@
   font-weight: normal;
   font-style: normal;
 }
-
 @font-face {
   font-family: 'Onryou';
   src: url('fonts/onryou.woff2') format('woff2');
@@ -24,181 +23,203 @@
 :root {
   --void:#05040a; --parchment:#ede0c8; --gold:#c8a45a; --gold-dim:#6e5a30;
   --ash:#100e18; --cream:#ddd0b8; --ember:#8c2a2a;
+  
+  /* Dynamic Card Scaling for No-Scroll Architecture */
+  --c-scale: 1; 
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{min-height:100vh;background:var(--void);color:var(--parchment);font-family:'Cormorant Garamond',serif;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;scroll-behavior:smooth;}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 50% -10%,rgba(100,40,160,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(40,10,80,.12) 0%,transparent 60%),radial-gradient(ellipse 50% 30% at 80% 90%,rgba(180,100,20,.06) 0%,transparent 60%);}
-.stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.star{position:absolute;background:white;border-radius:50%;animation:tw var(--d) ease-in-out infinite alternate;opacity:0;}
-@keyframes tw{from{opacity:0}to{opacity:var(--o)}}
+
+/* ── NO SCROLL LOCK (Perfect for Carrd Embeds) ── */
+html, body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important; 
+  touch-action: none; /* Kills mobile bounce/scroll */
+  background: var(--void);
+  color: var(--parchment);
+  font-family: 'Cormorant Garamond', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 40% at 50% -10%, rgba(100,40,160,.18) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 60% at 20% 80%, rgba(40,10,80,.12) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 30% at 80% 90%, rgba(180,100,20,.06) 0%, transparent 60%);
+}
+
+.stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.star { position: absolute; background: white; border-radius: 50%; animation: tw var(--d) ease-in-out infinite alternate; opacity: 0; }
+@keyframes tw { from { opacity: 0; } to { opacity: var(--o); } }
 
 .stars-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
 
 /* SCREENS */
-.screen{position:relative;z-index:1;width:100%;max-width:480px;padding:60px 28px 80px;display:flex;flex-direction:column;align-items:center;min-height:100vh;justify-content:center;}
-.screen.hidden{display:none;}
-.main-screen{position:relative;z-index:1;width:100%;max-width:800px;padding:50px 24px 90px;display:flex;flex-direction:column;align-items:center; transition: opacity 0.5s ease;}
-.main-screen.hidden{display:none;}
+.screen {
+  position: relative; z-index: 1; width: 100%; max-width: 480px; 
+  height: 100vh; padding: 20px; display: flex; flex-direction: column; 
+  align-items: center; justify-content: center;
+}
+.screen.hidden { display: none; }
+
+.main-screen {
+  position: relative; z-index: 1; width: 100%; max-width: 1200px;
+  height: 100vh; padding: 2vh 20px; display: flex; flex-direction: column; 
+  align-items: center; justify-content: center;
+}
+.main-screen.hidden { display: none; }
 
 /* LAYOUT */
 .oracle-left, .oracle-right { display: flex; flex-direction: column; align-items: center; width: 100%; }
 
 @media(min-width: 1024px) {
-  .main-screen { 
-    max-width: 1300px; 
-    flex-direction: row; 
-    justify-content: space-between; 
-    align-items: flex-start; 
-    padding: 12vh 40px 10vh; 
-    gap: 60px; 
-    min-height: 100vh; 
-  }
-  .oracle-left { 
-    width: 440px; 
-    flex-shrink: 0; 
-    position: sticky; 
-    top: 10vh; 
-    height: max-content;
-  }
-  .oracle-right { 
-    flex: 1; 
-    display: flex;
-    flex-direction: column;
-  }
-  .ritual-theater { 
-    min-height: 500px; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-  }
+  .main-screen { flex-direction: row; justify-content: center; gap: 60px; }
+  .oracle-left { width: 380px; flex-shrink: 0; }
+  .oracle-right { flex: 1; max-width: 650px; }
 }
 
-/* SHUFFLE ANIMATION - Unclipped space */
+/* INTAKE */
+.intake-title { font-family: 'Cinzel', serif; font-size: clamp(24px, 5vw, 38px); color: var(--gold); letter-spacing: .2em; text-align: center; text-shadow: 0 0 40px rgba(200,164,90,.2); margin-bottom: 8px; }
+.intake-sub { font-size: 13px; font-style: italic; color: var(--gold-dim); letter-spacing: .08em; text-align: center; margin-bottom: 24px; }
+.geo { display: flex; align-items: center; gap: 10px; width: 100%; margin: 10px 0 20px; max-width: 460px; }
+.geo-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim)); }
+.geo-line.r { background: linear-gradient(90deg, var(--gold-dim), transparent); }
+.geo-sym { font-size: 13px; color: var(--gold-dim); }
+.field-group { width: 100%; margin-bottom: 15px; }
+.field-label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: .4em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 5px; display: block; }
+.field-hint { font-size: 10px; font-style: italic; color: rgba(200,164,90,.4); margin-bottom: 5px; display: block; letter-spacing: .04em; }
+input[type="date"], input[type="time"], input[type="text"] { width: 100%; background: rgba(200,164,90,.04); border: 1px solid var(--gold-dim); color: var(--parchment); font-family: 'Cormorant Garamond', serif; font-size: 15px; padding: 12px 16px; letter-spacing: .05em; outline: none; border-radius: 2px; color-scheme: dark; }
+input:focus { border-color: var(--gold); }
+.submit-btn { width: 100%; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .35em; padding: 14px; cursor: pointer; text-transform: uppercase; transition: all .4s; margin-top: 5px; position: relative; overflow: hidden; }
+.submit-btn::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.23,1,.32,1); z-index: -1; }
+.submit-btn:hover { color: var(--void); }
+.submit-btn:hover::before { transform: scaleX(1); }
+.error-msg { font-family: 'Onryou', serif; font-size: 14px; color: var(--ember); font-style: italic; letter-spacing: .1em; margin-top: 10px; text-align: center; min-height: 16px; }
+
+/* MAIN TEXT RHYTHM */
+.eyebrow { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: .5em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 5px; text-align: center; }
+h1 { font-family: 'Cinzel', serif; font-size: clamp(18px, 4vw, 28px); font-weight: 400; color: var(--gold); letter-spacing: .2em; text-align: center; text-shadow: 0 0 40px rgba(200,164,90,.2); margin-bottom: 2px; }
+.sub { font-size: 12px; font-style: italic; color: var(--gold-dim); letter-spacing: .08em; margin-bottom: 5px; text-align: center; }
+.chart-label { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: .3em; color: var(--gold-dim); text-transform: uppercase; text-align: center; margin-bottom: 6px; }
+.chart-desc { font-size: 12px; font-style: italic; color: var(--gold-dim); letter-spacing: .07em; text-align: center; margin-bottom: 15px; max-width: 400px; line-height: 1.6; }
+
+/* HORIZONTAL SPREAD */
+.spread-row { 
+  width: 100%; display: flex; flex-direction: row; 
+  justify-content: center; align-items: flex-start; gap: 20px; 
+  opacity: 1; transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.spread-row.faded { opacity: 0; pointer-events: none; }
+.card-unit { display: flex; flex-direction: column; align-items: center; width: auto; }
+.slot-label { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: .4em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 10px; }
+
+/* SHUFFLE ANIMATION */
 #shuffleStage { 
-  position: relative; width: 400px; height: 300px; margin: 40px auto; 
-  display: none; opacity: 0; transition: opacity 0.4s ease; 
-  perspective: 1200px; transform-style: preserve-3d;
+  position: absolute; top: 50%; left: 50%; 
+  margin-top: calc(-129px * var(--c-scale)); margin-left: calc(-74px * var(--c-scale)); 
+  width: calc(148px * var(--c-scale)); height: calc(258px * var(--c-scale)); 
+  visibility: hidden; opacity: 0; transition: opacity 0.8s ease; 
+  perspective: 1200px; transform-style: preserve-3d; z-index: 50; 
 }
 .shuffle-card { 
-  position: absolute; top: 21px; left: 126px; /* Centered in the 400x300 space */
-  width: 148px; height: 258px;
-  background: linear-gradient(160deg,#12101e,#0d0b16); 
-  border: 1px solid rgba(200,164,90,0.4); border-radius: 8px; z-index: 10; 
-  display: flex; align-items: center; justify-content: center;
+  position: absolute; inset: 0; background: linear-gradient(160deg,#12101e,#0d0b16); 
+  border: 1px solid rgba(200,164,90,0.4); border-radius: 8px; 
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.4);
 }
 .shuffle-card svg { position: absolute; width: 88%; height: 88%; opacity: .1; }
-.shuffle-card::before { content: ''; position: absolute; inset: 7px; border: 1px solid rgba(200,164,90,.09); border-radius: 5px; pointer-events: none; }
+.shuffle-card::before { content: ''; position: absolute; inset: 7px; border: 1px solid rgba(200,164,90,.09); border-radius: 5px; }
 
 @keyframes shuffle-left { 
   0% { transform: translate3d(0, 0, 0) rotate(0deg); z-index: 10; } 
-  50% { transform: translate3d(-100px, -20px, 50px) rotate(-15deg); z-index: 12; } 
+  50% { transform: translate3d(-60px, -10px, 20px) rotate(-12deg); z-index: 12; } 
   100% { transform: translate3d(0, 0, 0) rotate(0deg); z-index: 10; } 
 }
 @keyframes shuffle-right { 
   0% { transform: translate3d(0, 0, 0) rotate(0deg); z-index: 10; } 
-  50% { transform: translate3d(100px, 20px, -50px) rotate(15deg); z-index: 8; } 
+  50% { transform: translate3d(60px, 10px, -20px) rotate(12deg); z-index: 8; } 
   100% { transform: translate3d(0, 0, 0) rotate(0deg); z-index: 10; } 
 }
 .shuffling-l { animation: shuffle-left 0.7s cubic-bezier(0.25, 0.8, 0.5, 1) infinite; }
 .shuffling-r { animation: shuffle-right 0.7s cubic-bezier(0.25, 0.8, 0.5, 1) infinite; }
 
-/* HORIZONTAL SPREAD */
-.spread-row { 
-  width: 100%; max-width: 800px; display: flex; flex-direction: row; 
-  justify-content: center; align-items: flex-start; gap: 30px; margin-top: 20px; 
-  transition: opacity 0.5s ease;
+/* DYNAMIC SCALED CARDS */
+.card-wrap { perspective: 1200px; transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1); }
+.card { 
+  width: calc(148px * var(--c-scale)); height: calc(258px * var(--c-scale)); 
+  position: relative; transform-style: preserve-3d; transition: transform 1s cubic-bezier(.23,1,.32,1), filter 1s ease, opacity 1s ease; cursor: pointer; 
 }
-.spread-row.faded { opacity: 0; }
-
-/* CARD & TEXT */
-.card-unit { flex: 1; display: flex; flex-direction: column; align-items: center; max-width: 200px; }
-.slot-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:12px;}
-
-.card-wrap{perspective:1200px;}
-.card {
-  width: 148px; height: 258px; position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(.23,1,.32,1);
-  cursor: pointer;
-}
-
-/* The Vertical X-Axis Flip
-  Strict rotational rules govern the physical illusion.
-*/
 .card.flipped { transform: rotateX(180deg); }
 .card.flipped.rev { transform: rotateX(180deg) rotateZ(180deg); }
-
-.card-back, .card-front {
-  position: absolute; inset: 0; border-radius: 8px;
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
-}
-
-.card-back {
-  background: linear-gradient(160deg,#12101e,#0d0b16);
-  border: 1px solid rgba(200,164,90,.22);
-  display: flex; align-items: center; justify-content: center; overflow: hidden;
-  transform: rotateX(0deg); /* Explicitly zeroed to prevent engine confusion */
-  z-index: 2; /* Bound above the front */
-}
+.card-back, .card-front { position: absolute; inset: 0; border-radius: 8px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.card-back { background: linear-gradient(160deg,#12101e,#0d0b16); border: 1px solid rgba(200,164,90,.22); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .card-back svg { position: absolute; width: 88%; height: 88%; opacity: .1; }
 .card-back::before { content: ''; position: absolute; inset: 7px; border: 1px solid rgba(200,164,90,.09); border-radius: 5px; }
-
-.tap-hint { position: absolute; bottom: 13px; font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: .35em; color: rgba(200,164,90,.38); text-transform: uppercase; animation: breathe 2.8s ease-in-out infinite; }
+.tap-hint { position: absolute; bottom: calc(13px * var(--c-scale)); font-family: 'Cinzel', serif; font-size: calc(8px * var(--c-scale)); letter-spacing: .35em; color: rgba(200,164,90,.38); text-transform: uppercase; animation: breathe 2.8s ease-in-out infinite; }
 @keyframes breathe { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
 
-.card-front {
-  background: linear-gradient(170deg,#f0e4c8,#e4d4a8);
-  border: 1px solid var(--gold-dim);
-  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-  padding: 15px 11px 11px; color: #1a1208;
-  transform: rotateX(-180deg); /* Entombed facing the void */
-  z-index: 1;
-}
+.card-front { background: linear-gradient(170deg,#f0e4c8,#e4d4a8); border: 1px solid var(--gold-dim); transform: rotateX(-180deg); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: calc(15px * var(--c-scale)) calc(11px * var(--c-scale)); color: #1a1208; }
 .card-front::before { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(100,80,30,.14); border-radius: 5px; pointer-events: none; }
-.cnum { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: .2em; color: rgba(100,80,30,.48); align-self: flex-start; }
-.cglyph { font-size: 58px; line-height: 1; filter: drop-shadow(0 4px 10px rgba(0,0,0,.14)); }
-.cname { font-family: 'Onryou', 'Cinzel', serif; font-size: 11px; letter-spacing: .1em; text-align: center; color: #2a1e08; line-height: 1.5; }
-.crev { font-family: 'Onryou', serif; font-size: 10px; color: var(--ember); font-style: italic; letter-spacing: .15em; }
+.cnum { font-family: 'Cinzel', serif; font-size: calc(8px * var(--c-scale)); letter-spacing: .2em; color: rgba(100,80,30,.48); align-self: flex-start; }
+.cglyph { font-size: calc(58px * var(--c-scale)); line-height: 1; filter: drop-shadow(0 4px 10px rgba(0,0,0,.14)); }
+.cname { font-family: 'Onryou', 'Cinzel', serif; font-size: calc(11px * var(--c-scale)); letter-spacing: .1em; text-align: center; color: #2a1e08; line-height: 1.5; }
+.crev { font-family: 'Onryou', serif; font-size: calc(10px * var(--c-scale)); color: var(--ember); font-style: italic; letter-spacing: .15em; }
+
+/* ── THE ANOMALY (BROKEN STATE) ── */
+.card.broken .card-front {
+  background: linear-gradient(170deg,#1a0505,#0a0000); border-color: var(--ember); color: #fff; box-shadow: 0 0 20px rgba(140,42,42,0.5);
+}
+.card.broken .cglyph, .card.broken .cname, .card.broken .cnum {
+  color: var(--ember); text-shadow: 2px 0 0 #00f, -2px 0 0 #f00; animation: jitter 0.2s infinite;
+}
+@keyframes jitter { 0%{transform:translate(0,0)} 25%{transform:translate(1px,-1px)} 50%{transform:translate(-1px,1px)} 75%{transform:translate(-2px,0)} 100%{transform:translate(1px,1px)} }
+.card.burning { filter: sepia(1) hue-rotate(-50deg) saturate(5) brightness(0.4) contrast(2) blur(4px); opacity: 0; transform: rotateX(-180deg) scale(0.8) translateY(-20px) !important; }
 
 /* INLINE READING */
-.inline-reading { width: 100%; max-width: 200px; opacity: 0; transform: translateY(10px); transition: opacity .8s ease, transform .8s ease; pointer-events: none; margin-top: 20px; text-align: center; }
+.inline-reading { width: 100%; max-width: calc(180px * var(--c-scale)); opacity: 0; transform: translateY(10px); transition: opacity .8s ease, transform .8s ease; pointer-events: none; margin-top: 15px; text-align: center; }
 .inline-reading.show { opacity: 1; transform: translateY(0); pointer-events: all; }
-.inline-card-name { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); letter-spacing: .12em; margin-bottom: 4px; }
-.inline-tradition { font-size: 9px; letter-spacing: .2em; color: rgba(120,60,180,.62); font-family: 'Cinzel', serif; text-transform: uppercase; margin-bottom: 12px; }
-.three-lines { font-size: 13px; line-height: 1.9; color: var(--cream); font-style: italic; font-weight: 300; }
-.three-lines p { margin: 0; padding: 2px 0; }
+.inline-card-name { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); letter-spacing: .12em; margin-bottom: 2px; }
+.inline-tradition { font-size: 8px; letter-spacing: .2em; color: rgba(120,60,180,.62); font-family: 'Cinzel', serif; text-transform: uppercase; margin-bottom: 8px; }
+.three-lines { font-size: 11px; line-height: 1.6; color: var(--cream); font-style: italic; font-weight: 300; }
+.three-lines p { margin: 0; padding: 1px 0; }
 
 /* SYNTHESIS */
-.synthesis-block{ width:100%;max-width:560px;opacity:0;transition:opacity 0.8s ease; pointer-events:none; min-height: 200px; }
-.synthesis-block.show{opacity:1;pointer-events:all;}
-.synthesis-text{font-family:'IPAexMincho', 'Cormorant Garamond', serif; font-size:16px;line-height:2.05;color:var(--cream);font-weight:300;font-style:italic;text-align:center;}
+.synthesis-block { width: 100%; max-width: 560px; opacity: 0; transform: translateY(16px); transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1), transform 1s cubic-bezier(0.23, 1, 0.32, 1); pointer-events: none; margin-top: 15px; }
+.synthesis-block.show { opacity: 1; transform: translateY(0); pointer-events: all; }
+.synthesis-label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: .45em; color: var(--gold-dim); text-transform: uppercase; text-align: center; margin-bottom: 12px; }
+.synthesis-text { font-family: 'IPAexMincho', 'Cormorant Garamond', serif; font-size: 14px; line-height: 1.8; color: var(--cream); font-weight: 300; font-style: italic; text-align: center; }
 
-.synthesis-paragraph{margin-bottom:24px;opacity:0;transition:opacity 0.5s ease;}
-.synthesis-paragraph.visible{opacity:1;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.loaded{animation:fadeUp .7s ease forwards;}
+
+/* FLAME ETCH */
+.synthesis-paragraph{margin-bottom:16px;opacity:0;transform:translateY(15px);transition:opacity 1s cubic-bezier(.23,1,.32,1),transform 1s cubic-bezier(.23,1,.32,1);}
+.synthesis-paragraph.visible{opacity:1;transform:translateY(0);}
 .etch-cursor{color:var(--gold);animation:ecur .6s ease-in-out infinite alternate;}
-@keyframes ecur{from{opacity:.4;}to{opacity:1;}}
-.etch-ghost{color:var(--gold);opacity:.85;font-style:italic;}
-.etch-word{color:var(--gold);}
+@keyframes ecur{from{opacity:.4;text-shadow:none}to{opacity:1;text-shadow:0 0 8px var(--gold),0 0 20px rgba(200,164,90,.4)}}
+.etch-ghost{color:var(--gold);text-shadow:0 0 12px rgba(200,164,90,.7);opacity:.85;font-style:italic;}
+.etch-word{color:var(--gold);text-shadow:0 0 10px rgba(200,164,90,.5);animation:esettle 1.8s ease forwards;}
+@keyframes esettle{0%{color:var(--gold);text-shadow:0 0 18px rgba(200,164,90,.9)}70%{color:#e8cca0;text-shadow:0 0 4px rgba(200,164,90,.2)}100%{color:var(--cream);text-shadow:none}}
 
 /* ACTIONS */
-.inline-actions { margin-top: 15px; }
-.inline-action { color: var(--gold); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-style: italic; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .1em; margin: 0 10px; }
-.inline-action:hover { text-shadow: 0 0 10px rgba(200,164,90,.5); }
+@keyframes fadeReveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.inline-actions { opacity: 0; animation: fadeReveal 1.2s ease 0.6s forwards; display: block; margin-top: 10px; }
+.inline-action { color: rgba(200,164,90,.6); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-style: italic; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .1em; transition: color .3s, text-shadow .3s; }
+.inline-action:hover { color: var(--gold); text-shadow: 0 0 10px rgba(200,164,90,.5); }
 
-/* ELEMENTS */
-.intake-title{font-family:'Cinzel',serif;font-size:clamp(24px,5vw,38px);color:var(--gold);text-align:center;margin-bottom:8px;}
-.field-group{width:100%;margin-bottom:20px;}
-.field-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:7px;display:block;}
-input{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim);color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:15px;padding:12px 16px;border-radius:2px;}
-.submit-btn{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.35em;padding:14px;cursor:pointer;transition:all .4s;}
-.submit-btn:hover{color:var(--void);background:var(--gold);}
-.error-msg{font-family:'Onryou', serif; font-size:14px;color:var(--ember);font-style:italic;letter-spacing:.1em;margin-top:10px;text-align:center;min-height:16px;}
-
-@media(max-width:1023px){
-  .spread-row{flex-direction:column;align-items:center;}
-  .card-unit{margin-bottom:30px;}
-  .synthesis-block { margin-top: 40px; }
+/* MOBILE COMPRESSION RULES */
+@media (max-width: 1023px) {
+  :root { --c-scale: 0.65; }
+  .spread-row { gap: 10px; }
+}
+@media (max-width: 480px) {
+  :root { --c-scale: 0.55; }
+  h1 { font-size: 18px; }
+  .synthesis-text { font-size: 13px; }
+  .inline-reading { max-width: 100px; } /* Prevent text overflow on tiny cards */
 }
 </style>
 </head>
@@ -208,9 +229,24 @@ input{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim
 
 <div class="screen" id="intakeScreen">
   <div class="intake-title">Lunarot</div>
-  <div class="field-group"><label class="field-label" for="dobInput">Date of Birth</label><input type="date" id="dobInput"/></div>
-  <div class="field-group"><label class="field-label" for="timeInput">Time of Birth</label><input type="time" id="timeInput"/></div>
-  <div class="field-group"><label class="field-label" for="nameInput">Your Name</label><input type="text" id="nameInput" maxlength="40"/></div>
+  <div class="intake-sub">enter the coordinates of your arrival</div>
+  <div class="geo"><div class="geo-line"></div><div class="geo-sym">✦</div><div class="geo-line r"></div></div>
+
+  <div class="field-group">
+    <label class="field-label" for="dobInput">Date of Birth</label>
+    <input type="date" id="dobInput"/>
+  </div>
+
+  <div class="field-group">
+    <label class="field-label" for="timeInput">Time of Birth &nbsp;<span style="color:rgba(200,164,90,.38);font-style:italic;font-size:9px;letter-spacing:.06em;">(optional)</span></label>
+    <input type="time" id="timeInput"/>
+  </div>
+
+  <div class="field-group">
+    <label class="field-label" for="nameInput">Your Name &nbsp;<span style="color:rgba(200,164,90,.38);font-style:italic;font-size:9px;letter-spacing:.06em;">(optional)</span></label>
+    <input type="text" id="nameInput" placeholder="or leave it to the void" maxlength="40"/>
+  </div>
+
   <button class="submit-btn" onclick="submitIntake()">✦ Begin the Draw ✦</button>
   <div class="error-msg" id="errorMsg"></div>
 </div>
@@ -219,21 +255,28 @@ input{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim
   <div class="oracle-left">
     <div class="eyebrow" id="chartEyebrow">☽ · ✦ · ♄</div>
     <h1>The Sacred Draw</h1>
+    <div class="sub">past · present · future</div>
+
+    <div class="geo" style="width:100%;margin:10px 0 15px;">
+      <div class="geo-line"></div><div class="geo-sym">✡ · ☽ · 𓂀 · ✦ · 卍</div><div class="geo-line r"></div>
+    </div>
+
     <div class="chart-label" id="chartLabel">Natal Chart</div>
     <div class="chart-desc" id="chartDesc"></div>
+
     <div class="synthesis-block" id="synthesisBlock">
+      <div class="synthesis-label">✦ The Confluence ✦</div>
       <div class="synthesis-text" id="synthesisText"></div>
     </div>
   </div>
+
   <div class="oracle-right">
-    <div class="ritual-theater">
-      <div id="shuffleStage">
-        <div class="shuffle-card shuffling-l"></div>
-        <div class="shuffle-card shuffling-r" style="animation-delay: 0.1s"></div>
-        <div class="shuffle-card shuffling-l" style="animation-delay: 0.2s"></div>
-      </div>
-      <div class="spread-row" id="spreadRow"></div>
+    <div id="shuffleStage">
+      <div class="shuffle-card shuffling-l"></div>
+      <div class="shuffle-card shuffling-r" style="animation-delay: 0.1s"></div>
+      <div class="shuffle-card shuffling-l" style="animation-delay: 0.2s"></div>
     </div>
+    <div class="spread-row" id="spreadRow"></div>
   </div>
 </div>
 
@@ -251,34 +294,10 @@ input{width:100%;background:rgba(200,164,90,.04);border:1px solid var(--gold-dim
 
 // ── ASTROLOGY ENGINE ───────────────────────────────────────
 const SIGN_NAMES=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-
-function getSunSign(month,day){
-  const cuts=[[3,21],[4,20],[5,21],[6,21],[7,23],[8,23],[9,23],[10,23],[11,22],[12,22],[1,20],[2,19]];
-  for(let i=0;i<12;i++){
-    const [m,d]=cuts[i],[nm,nd]=cuts[(i+1)%12];
-    if((month===m&&day>=d)||(month===nm&&day<nd))return i;
-  }
-  return 9;
-}
-
-function toJD(year,month,day,hour=12){
-  const a=Math.floor((14-month)/12),y=year+4800-a,m=month+12*a-3;
-  const JDN=day+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
-  return JDN+(hour-12)/24;
-}
-
-function getMoonSign(jd){
-  const REF_JD=2451549.5,REF_SIGN=9,LUNAR=29.530589,SIGN_DAYS=LUNAR/12;
-  const offset=Math.floor((jd-REF_JD)/SIGN_DAYS)%12;
-  return((REF_SIGN+offset)%12+12)%12;
-}
-
-function getRisingSign(jd,birthHour){
-  const sunLon=(jd-2451545.0)*360/365.25;
-  const sunSign=Math.floor(((sunLon%360)+360)%360/30);
-  const signOffset=Math.round((birthHour-12)/2);
-  return((sunSign+signOffset+3)%12+12)%12;
-}
+function getSunSign(month,day){ const cuts=[[3,21],[4,20],[5,21],[6,21],[7,23],[8,23],[9,23],[10,23],[11,22],[12,22],[1,20],[2,19]]; for(let i=0;i<12;i++){ const [m,d]=cuts[i],[nm,nd]=cuts[(i+1)%12]; if((month===m&&day>=d)||(month===nm&&day<nd))return i; } return 9; }
+function toJD(year,month,day,hour=12){ const a=Math.floor((14-month)/12),y=year+4800-a,m=month+12*a-3; const JDN=day+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045; return JDN+(hour-12)/24; }
+function getMoonSign(jd){ const REF_JD=2451549.5,REF_SIGN=9,LUNAR=29.530589,SIGN_DAYS=LUNAR/12; const offset=Math.floor((jd-REF_JD)/SIGN_DAYS)%12; return((REF_SIGN+offset)%12+12)%12; }
+function getRisingSign(jd,birthHour){ const sunLon=(jd-2451545.0)*360/365.25; const sunSign=Math.floor(((sunLon%360)+360)%360/30); const signOffset=Math.round((birthHour-12)/2); return((sunSign+signOffset+3)%12+12)%12; }
 
 // ── LEXICON ────────────────────────────────────────────────
 const SIGN_ADJ={
@@ -297,61 +316,30 @@ const SIGN_ADJ={
 };
 
 const CARD_ADJ={
-  'The Fool':          ['threshold','unbegun','unburdened','about to fall','leaping'],
-  'The Magician':      ['channelling','willed','instrumental','deliberate','conjuring'],
-  'The High Priestess':['veiled','unspeaking','between','lunar','kept'],
-  'The Empress':       ['abundant','embodied','fertile','earthen','overflowing'],
-  'The Emperor':       ['structured','lawful','fathered','built','immovable'],
-  'The Hierophant':    ['inherited','transmitted','orthodox','encoded','received'],
-  'The Lovers':        ['choosing','split','mirrored','covenanted','doubled'],
-  'The Chariot':       ['directed','harnessed','moving','controlled','driven'],
-  'Strength':          ['tamed','soft-powerful','patient','animal','held'],
-  'The Hermit':        ['solitary','lantern-holding','withdrawn','inward','alone'],
-  'Wheel of Fortune':  ['turning','cyclic','fated','indifferent','returning'],
-  'Justice':           ['consequenced','balanced','exacting','clear','answering'],
-  'The Hanged Man':    ['suspended','inverted','waiting','surrendered','still'],
-  'Death':             ['ending','composting','releasing','transforming','departing'],
-  'Temperance':        ['alchemising','patient','blending','middle','measured'],
-  'The Devil':         ['bound','shadowed','chained','seduced','refusing to leave'],
-  'The Tower':         ['struck','collapsing','revealed','sudden','undone'],
-  'The Star':          ['hoping','wounded-guiding','night-lit','open','visible'],
-  'The Moon':          ['illusory','subterranean','howling','unclear','dreaming'],
-  'The Sun':           ['clarified','returned','warm','visible','named'],
-  'Judgement':         ['called','resurrected','answered','awakened','summoned'],
-  'The World':         ['completed','dancing','encompassed','whole','arrived'],
-  'Ace of Cups':       ['overflowing','given','opened','held out','beginning'],
-  'Three of Swords':   ['pierced','grief-clear','through-cut','named at last','honest'],
-  'Five of Cups':      ['mourning','spilled','backwards-facing','grieving','still counting'],
-  'Ten of Pentacles':  ['legacy-built','accumulated','inherited','lasting','given forward'],
-  'Page of Wands':     ['spark-stage','unlit','restless','almost-beginning','bright'],
-  'Knight of Swords':  ['charging','truth-first','fast','unpausing','cutting through'],
-  'Queen of Cups':     ['witnessed','empathic','throne-holding','feeling-named','present'],
-  'King of Pentacles': ['patient-mastered','solid','earned','unhurried','grounded'],
-  'Seven of Wands':    ['defended','summit-alone','holding ground','outnumbered','standing'],
-  'Two of Cups':       ['mirrored','meeting','recognised','offered','mutual'],
+  'The Fool':          ['threshold','unbegun','unburdened','about to fall','leaping'], 'The Magician':      ['channelling','willed','instrumental','deliberate','conjuring'],
+  'The High Priestess':['veiled','unspeaking','between','lunar','kept'], 'The Empress':       ['abundant','embodied','fertile','earthen','overflowing'],
+  'The Emperor':       ['structured','lawful','fathered','built','immovable'], 'The Hierophant':    ['inherited','transmitted','orthodox','encoded','received'],
+  'The Lovers':        ['choosing','split','mirrored','covenanted','doubled'], 'The Chariot':       ['directed','harnessed','moving','controlled','driven'],
+  'Strength':          ['tamed','soft-powerful','patient','animal','held'], 'The Hermit':        ['solitary','lantern-holding','withdrawn','inward','alone'],
+  'Wheel of Fortune':  ['turning','cyclic','fated','indifferent','returning'], 'Justice':           ['consequenced','balanced','exacting','clear','answering'],
+  'The Hanged Man':    ['suspended','inverted','waiting','surrendered','still'], 'Death':             ['ending','composting','releasing','transforming','departing'],
+  'Temperance':        ['alchemising','patient','blending','middle','measured'], 'The Devil':         ['bound','shadowed','chained','seduced','refusing to leave'],
+  'The Tower':         ['struck','collapsing','revealed','sudden','undone'], 'The Star':          ['hoping','wounded-guiding','night-lit','open','visible'],
+  'The Moon':          ['illusory','subterranean','howling','unclear','dreaming'], 'The Sun':           ['clarified','returned','warm','visible','named'],
+  'Judgement':         ['called','resurrected','answered','awakened','summoned'], 'The World':         ['completed','dancing','encompassed','whole','arrived'],
+  'Ace of Cups':       ['overflowing','given','opened','held out','beginning'], 'Three of Swords':   ['pierced','grief-clear','through-cut','named at last','honest'],
+  'Five of Cups':      ['mourning','spilled','backwards-facing','grieving','still counting'], 'Ten of Pentacles':  ['legacy-built','accumulated','inherited','lasting','given forward'],
+  'Page of Wands':     ['spark-stage','unlit','restless','almost-beginning','bright'], 'Knight of Swords':  ['charging','truth-first','fast','unpausing','cutting through'],
+  'Queen of Cups':     ['witnessed','empathic','throne-holding','feeling-named','present'], 'King of Pentacles': ['patient-mastered','solid','earned','unhurried','grounded'],
+  'Seven of Wands':    ['defended','summit-alone','holding ground','outnumbered','standing'], 'Two of Cups':       ['mirrored','meeting','recognised','offered','mutual'],
 };
 
 const TEMPLATES_LINE=[
-  'something {chart} and {card} —',
-  'the {sign} in you, {card}',
-  'a {chart} thing {card} in the dark',
-  '{card}, as only the {sign} knows how',
-  'what is {chart} becomes {card}',
-  'the {sign} tongue — {chart}, {card}',
-  '{chart} light through a {card} window',
-  'born {chart}, arriving {card}',
-  'the {sign} moves {chart} here — {card}',
-  'neither {chart} nor {card}, both',
-  'the {chart} part of you that is {card}',
-  '{chart} like {sign}, {card} like water',
-  'to be {chart} is to become {card}',
-  'the {card} surface of a {chart} thing',
-  '{chart} hands, {card} intentions',
-  'something {sign} — {chart} until {card}',
-  '{chart} where it started, {card} where it lands',
-  'the {sign} way of being {card}',
-  'not quite {chart}, not yet {card}',
-  '{card} — which is what {chart} looks like from the outside',
+  'something {chart} and {card} —', 'the {sign} in you, {card}', 'a {chart} thing {card} in the dark', '{card}, as only the {sign} knows how',
+  'what is {chart} becomes {card}', 'the {sign} tongue — {chart}, {card}', '{chart} light through a {card} window', 'born {chart}, arriving {card}',
+  'the {sign} moves {chart} here — {card}', 'neither {chart} nor {card}, both', 'the {chart} part of you that is {card}', '{chart} like {sign}, {card} like water',
+  'to be {chart} is to become {card}', 'the {card} surface of a {chart} thing', '{chart} hands, {card} intentions', 'something {sign} — {chart} until {card}',
+  '{chart} where it started, {card} where it lands', 'the {sign} way of being {card}', 'not quite {chart}, not yet {card}', '{card} — which is what {chart} looks like from the outside',
 ];
 
 const TEMPLATES_SYNTHESIS=[
@@ -359,48 +347,330 @@ const TEMPLATES_SYNTHESIS=[
   'Something {sunAdj} in the bones. Something {moonAdj} in the blood. The spread names the space between: {cardAdj1} pressing against {cardAdj2}, the self as its own unfinished argument.',
   'The {sun} arrives {sunAdj}. The {moon} stays {moonAdj}. The three positions reveal what the chart already suspected — a {cardAdj1} life navigating a {cardAdj2} world, still translating.',
   'There is something {sunAdj} about the way it begins, and something {moonAdj} about the way it ends. The middle is what the cards name: {cardAdj1}, then {cardAdj2}, then the long silence after.',
-  'The chart says {sunAdj}. The draw says {cardAdj1}. The {moon} moon keeps its answer — {moonAdj} — tucked beneath both. The truth lives in the overlap of all three.',
-  '{sunAdj} at the surface. {moonAdj} underneath. The spread fills the gap with what neither placement will say directly — {cardAdj1} becoming {cardAdj2}, slow and without announcement.',
-  'The {sun} in you is {sunAdj}. The {moon} is {moonAdj}. The cards have drawn a line between them — {cardAdj1} to {cardAdj2} — and called it the journey.',
-  'What is {sunAdj} seeks what is {moonAdj}. The draw places {cardAdj1} at the beginning and {cardAdj2} at the horizon. The distance between them is not a problem. It is the path.',
 ];
 
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
 
 function makeLine(chartSign,cardName,isReversed){
   const chartAdj=pick(SIGN_ADJ[chartSign]||SIGN_ADJ['Pisces']);
-  const cardAdjs=CARD_ADJ[cardName]||['present','still','unnamed'];
-  let cardAdj=pick(cardAdjs);
-  if(isReversed){
-    const neg=['not quite','once','almost','barely','refusing to be','only briefly','no longer'];
-    cardAdj=pick(neg)+' '+cardAdj;
-  }
-  return pick(TEMPLATES_LINE)
-    .replace('{chart}',chartAdj)
-    .replace('{card}',cardAdj)
-    .replace('{sign}',chartSign);
+  let cardAdj=pick(CARD_ADJ[cardName]||['present','still','unnamed']);
+  if(isReversed){ const neg=['not quite','once','almost','barely','refusing to be']; cardAdj=pick(neg)+' '+cardAdj; }
+  return pick(TEMPLATES_LINE).replace('{chart}',chartAdj).replace('{card}',cardAdj).replace('{sign}',chartSign);
 }
 
 function makeSynthesis(natal,drawn){
   const tmpl=pick(TEMPLATES_SYNTHESIS);
-  const sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']);
-  const moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
-  const allAdjs=drawn.reduce(function(acc,c){return acc.concat(CARD_ADJ[c.name]||['present']);}, []);
-  const ca1=pick(allAdjs);
-  const rest=allAdjs.filter(a=>a!==ca1);
-  const ca2=rest.length?pick(rest):pick(allAdjs);
-  return tmpl
-    .replace('{sun}',natal.sun)
-    .replace('{sunAdj}',sunAdj)
-    .replace('{moon}',natal.moon)
-    .replace('{moonAdj}',moonAdj)
-    .replace('{cardAdj1}',ca1)
-    .replace('{cardAdj2}',ca2);
+  const sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
+  const allAdjs=drawn.reduce((acc,c)=>acc.concat(CARD_ADJ[c.name]||['present']), []);
+  const ca1=pick(allAdjs), rest=allAdjs.filter(a=>a!==ca1), ca2=rest.length?pick(rest):pick(allAdjs);
+  return tmpl.replace('{sun}',natal.sun).replace('{sunAdj}',sunAdj).replace('{moon}',natal.moon).replace('{moonAdj}',moonAdj).replace('{cardAdj1}',ca1).replace('{cardAdj2}',ca2);
 }
 
 // ── NATAL STATE ────────────────────────────────────────────
-let NATAL_USER=null;
-let NATAL_PLANETS=[];
+let NATAL_USER=null, NATAL_PLANETS=[];
+const ELEMENT_COLOR={ Aries:'#e05050',Taurus:'#80c860',Gemini:'#f0d060',Cancer:'#7ec8e3', Leo:'#f5c842',Virgo:'#b0e0b0',Libra:'#f0a0e0',Scorpio:'#c080a0', Sagittarius:'#ffd580',Capricorn:'#a08060',Aquarius:'#80e8ff',Pisces:'#8080ff' };
+function hexToRgb(hex){if(!hex||hex.length<7)return'200,164,90';return parseInt(hex.slice(1,3),16)+','+parseInt(hex.slice(3,5),16)+','+parseInt(hex.slice(5,7),16);}
 
-const ELEMENT_COLOR={
-  Aries:'#e05050',Taurus:'#80c860',Gemini:'#f0d060',Cancer:'#7ec8
+function submitIntake(){
+  const dobVal=document.getElementById('dobInput').value, timeVal=document.getElementById('timeInput').value, nameVal=document.getElementById('nameInput').value.trim(), err=document.getElementById('errorMsg');
+  if(!dobVal){err.textContent='the void requires a date of birth';return;}
+  err.textContent='';
+  const [year,month,day]=dobVal.split('-').map(Number); let birthHour=null;
+  if(timeVal){const [h,m]=timeVal.split(':').map(Number);birthHour=h+m/60;}
+  const jd=toJD(year,month,day,birthHour||12), sunIdx=getSunSign(month,day), moonIdx=getMoonSign(jd), risingIdx=birthHour!==null?getRisingSign(jd,birthHour):null;
+
+  NATAL_USER={ sun:SIGN_NAMES[sunIdx],moon:SIGN_NAMES[moonIdx], rising:risingIdx!==null?SIGN_NAMES[risingIdx]:null, hasRising:risingIdx!==null,name:nameVal||null, sunIdx,moonIdx,risingIdx,jd };
+  buildNATAL();
+
+  document.getElementById('intakeScreen').classList.add('hidden');
+  document.getElementById('mainScreen').classList.remove('hidden');
+
+  const dateStr=new Date(year,month-1,day).toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('chartEyebrow').textContent= `${NATAL_USER.sun} · ${NATAL_USER.moon} Moon${NATAL_USER.rising?' · '+NATAL_USER.rising+' Rising':''}`;
+  document.getElementById('chartLabel').textContent= `Natal Chart · ${NATAL_USER.name?NATAL_USER.name+' · ':''}${dateStr}`;
+
+  buildChartDesc();
+  resizeCanvas(); cancelAnimationFrame(animFrame); activePlanets=new Set(); t0=0; drawConstellation();
+  startRitual();
+}
+
+function resetToIntake(){
+  cancelAnimationFrame(animFrame);
+  document.getElementById('mainScreen').classList.add('hidden'); document.getElementById('intakeScreen').classList.remove('hidden');
+  document.getElementById('dobInput').value=''; document.getElementById('timeInput').value=''; document.getElementById('nameInput').value='';
+  NATAL_USER=null; activePlanets=new Set();
+}
+
+function buildChartDesc(){
+  if(!NATAL_USER)return;
+  const sa=pick(SIGN_ADJ[NATAL_USER.sun]), ma=pick(SIGN_ADJ[NATAL_USER.moon]);
+  let d=`${NATAL_USER.sun} sun — ${sa} · ${NATAL_USER.moon} moon — ${ma}`;
+  if(NATAL_USER.rising) d+=` · ${NATAL_USER.rising} rising — ${pick(SIGN_ADJ[NATAL_USER.rising])}`;
+  const descEl = document.getElementById('chartDesc');
+  descEl.innerHTML = '';
+  etchParagraph(descEl, d);
+}
+
+function buildNATAL(){
+  if(!NATAL_USER)return; const u=NATAL_USER, sunDeg=u.sunIdx*30+15,moonDeg=u.moonIdx*30+15;
+  NATAL_PLANETS=[ {name:'Sun', symbol:'☉',deg:sunDeg, sign:u.sun, color:ELEMENT_COLOR[u.sun]||'#f5c842'}, {name:'Moon',symbol:'☽',deg:moonDeg,sign:u.moon,color:ELEMENT_COLOR[u.moon]||'#c8c8ff'} ];
+  if(u.risingIdx!==null)NATAL_PLANETS.push({name:'Rising',symbol:'AC',deg:u.risingIdx*30,sign:u.rising,color:ELEMENT_COLOR[u.rising]||'#7ec8e3'});
+  const flavours=[{name:'Mars',symbol:'♂',speed:2.0},{name:'Venus',symbol:'♀',speed:1.6},{name:'Mercury',symbol:'☿',speed:1.1},{name:'Jupiter',symbol:'♃',speed:.08},{name:'Saturn',symbol:'♄',speed:.03}];
+  flavours.forEach(f=>{ const deg=((u.jd*f.speed)%360+360)%360, sign=SIGN_NAMES[Math.floor(deg/30)]; NATAL_PLANETS.push({name:f.name,symbol:f.symbol,deg,sign,color:ELEMENT_COLOR[sign]||'#c8a45a'}); });
+}
+
+// ── CONSTELLATION CANVAS ───────────────────────────────────
+const cCanvas = document.getElementById('constellationCanvas'), cCtx = cCanvas.getContext('2d');
+let cw, ch, activePlanets=new Set(), animFrame=0, t0=0;
+function resizeCanvas() { cw = window.innerWidth; ch = window.innerHeight; cCanvas.width = cw; cCanvas.height = ch; }
+window.addEventListener('resize', resizeCanvas);
+
+function drawConstellation() {
+  cCtx.clearRect(0, 0, cw, ch); t0 += 0.0015;
+  const cx = cw / 2, cy = ch / 2, rx = cw * 0.45, ry = ch * 0.45, activeNodes = [];
+
+  NATAL_PLANETS.forEach(p => {
+    const isActive = activePlanets.has(p.name), driftDeg = p.deg + (t0 * 15), rad = (driftDeg - 90) * Math.PI / 180;
+    const px = cx + rx * Math.cos(rad), py = cy + ry * Math.sin(rad);
+    if (isActive) activeNodes.push({ x: px, y: py, color: p.color });
+    const alpha = isActive ? 0.9 : 0.15, size = isActive ? 3 : 1.5;
+    
+    cCtx.beginPath(); cCtx.arc(px, py, size, 0, Math.PI * 2); cCtx.fillStyle = `rgba(${hexToRgb(p.color)}, ${alpha})`; cCtx.fill();
+    if (isActive) { cCtx.font = '12px "Cormorant Garamond", serif'; cCtx.fillStyle = `rgba(${hexToRgb(p.color)}, 0.8)`; cCtx.textAlign = 'center'; cCtx.fillText(p.symbol, px, py - 12); }
+  });
+
+  if (activeNodes.length > 1) {
+    cCtx.beginPath(); cCtx.moveTo(activeNodes[0].x, activeNodes[0].y);
+    for (let i = 1; i < activeNodes.length; i++) cCtx.lineTo(activeNodes[i].x, activeNodes[i].y);
+    if (activeNodes.length > 2) cCtx.lineTo(activeNodes[0].x, activeNodes[0].y);
+    const pulse = 0.15 + 0.15 * Math.sin(Date.now() / 800);
+    cCtx.strokeStyle = `rgba(200, 164, 90, ${pulse})`; cCtx.lineWidth = 1; cCtx.setLineDash([4, 8]); cCtx.stroke(); cCtx.setLineDash([]);
+  }
+  animFrame = requestAnimationFrame(drawConstellation);
+}
+
+const CARD_CONJ={ 'Sun':['Sun'],'Moon':['Moon'],'Star':['Venus','Moon'],'Tower':['Mars','Saturn'], 'Devil':['Saturn'],'Lovers':['Venus','Moon'],'Chariot':['Mars','Sun'], 'Strength':['Sun','Mars'],'Hermit':['Saturn','Mercury'],'Wheel':['Jupiter','Sun'], 'Justice':['Saturn','Mercury'],'Hanged':['Moon'],'Death':['Mars'], 'Temperance':['Jupiter','Venus'],'Priestess':['Moon'],'Empress':['Venus','Moon'], 'Emperor':['Sun','Saturn'],'Hierophant':['Jupiter','Saturn'], 'Magician':['Mercury','Sun'],'Fool':['Sun'],'Judgement':['Sun'], 'World':['Saturn','Jupiter'],'Cups':['Moon','Venus'],'Swords':['Mars','Mercury'], 'Wands':['Sun','Mars'],'Pentacles':['Saturn','Venus'] };
+function activateConj(cardName){for(const[k,ps]of Object.entries(CARD_CONJ))if(cardName.includes(k))ps.forEach(p=>activePlanets.add(p));}
+
+// ── DECK ───────────────────────────────────────────────────
+const DECK=[
+  {name:"The Fool", num:"0", glyph:"🜁",tradition:"The Leap of Faith"}, {name:"The Magician", num:"I", glyph:"☿",tradition:"The Vessel"},
+  {name:"The High Priestess",num:"II", glyph:"☽",tradition:"The Inner Sanctum"}, {name:"The Empress", num:"III", glyph:"♀",tradition:"The Holy Mother"},
+  {name:"The Emperor", num:"IV", glyph:"♂",tradition:"The Divine Law"}, {name:"The Hierophant", num:"V", glyph:"♉",tradition:"The Initiated Teaching"},
+  {name:"The Lovers", num:"VI", glyph:"♊",tradition:"The Holy Covenant"}, {name:"The Chariot", num:"VII", glyph:"♋",tradition:"Merkabah Mysticism"},
+  {name:"Strength", num:"VIII", glyph:"♌",tradition:"The Greater Jihad"}, {name:"The Hermit", num:"IX", glyph:"⊕",tradition:"The Desert Fathers"},
+  {name:"Wheel of Fortune", num:"X", glyph:"♃",tradition:"Divine Providence"}, {name:"Justice", num:"XI", glyph:"♎",tradition:"The Final Reckoning"},
+  {name:"The Hanged Man", num:"XII", glyph:"♆",tradition:"The Dark Night"}, {name:"Death", num:"XIII", glyph:"♏",tradition:"Fanaa · Sufi Annihilation"},
+  {name:"Temperance", num:"XIV", glyph:"♐",tradition:"Tikkun Olam"}, {name:"The Devil", num:"XV", glyph:"♑",tradition:"Zoroastrian Shadow"},
+  {name:"The Tower", num:"XVI", glyph:"🜂",tradition:"The Prophetic Strike"}, {name:"The Star", num:"XVII", glyph:"★",tradition:"Ahura Mazda's Light"},
+  {name:"The Moon", num:"XVIII", glyph:"☾",tradition:"The Veil of Maya"}, {name:"The Sun", num:"XIX", glyph:"☉",tradition:"The Divine Illumination"},
+  {name:"Judgement", num:"XX", glyph:"🜃",tradition:"The Final Trumpet"}, {name:"The World", num:"XXI", glyph:"♄",tradition:"Return to Ein Sof"},
+  {name:"Ace of Cups", num:"A·♥", glyph:"🜄",tradition:"Divine Love · Agape"}, {name:"Three of Swords", num:"III·⚔",glyph:"△",tradition:"The Pierced Heart"},
+  {name:"Five of Cups", num:"V·♥", glyph:"🜄",tradition:"The Spilled and Standing"}, {name:"Ten of Pentacles", num:"X·◈", glyph:"◈",tradition:"The Living Legacy"},
+  {name:"Page of Wands", num:"P·🔥", glyph:"🜂",tradition:"The Unlit Torch"}, {name:"Knight of Swords", num:"Kn·⚔", glyph:"⚔",tradition:"Truth at Speed"},
+  {name:"Queen of Cups", num:"Q·♥", glyph:"🜄",tradition:"The Throne of Empathy"}, {name:"King of Pentacles",num:"K·◈", glyph:"◈",tradition:"The Patient Empire"},
+  {name:"Seven of Wands", num:"VII·🔥",glyph:"🜂",tradition:"The Defended Summit"}, {name:"Two of Cups", num:"II·♥", glyph:"🜄",tradition:"The Mirrored Soul"},
+];
+
+const SVG_BACK=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="none" stroke="#c8a45a" stroke-width=".8"/><circle cx="100" cy="100" r="40" fill="none" stroke="#c8a45a" stroke-width="1.2"/><polygon points="100,30 170,150 30,150" fill="none" stroke="#c8a45a" stroke-width=".5"/></svg>`;
+
+const POSITIONS=["The Past","The Present","The Future"];
+let deckPool=[], deck=[], revealed=[false,false,false], drawnCards=[];
+
+async function startRitual() {
+  const stage = document.getElementById('shuffleStage'), spread = document.getElementById('spreadRow'), syn = document.getElementById('synthesisBlock');
+  if (spread.innerHTML.trim() !== '') {
+    spread.classList.add('faded'); syn.classList.remove('show');
+    await msDelay(800);
+  }
+
+  spread.innerHTML = ''; document.getElementById('synthesisText').innerHTML = '';
+  document.querySelectorAll('.shuffle-card').forEach(el => el.innerHTML = SVG_BACK);
+  
+  stage.style.visibility = 'visible'; stage.style.opacity = '1';
+  await msDelay(2200);
+  stage.style.opacity = '0';
+  await msDelay(800);
+  stage.style.visibility = 'hidden'; spread.classList.remove('faded');
+  
+  buildSpread();
+}
+
+function createCardHTML(card, i) {
+  return `
+    <div class="slot-label">${POSITIONS[i]}</div>
+    <div class="card-wrap" id="wrap-${i}">
+      <div class="card ${card.broken ? 'broken' : ''}" id="card-${i}" onclick="flipCard(${i})">
+        <div class="card-back">${SVG_BACK}<div class="tap-hint">Touch</div></div>
+        <div class="card-front">
+          <div class="cnum">${card.broken ? '???' : card.num}</div>
+          <div class="cglyph">${card.broken ? '⍼' : card.glyph}</div>
+          <div class="cname">${card.broken ? 'THE ANOMALY' : card.name}</div>
+          <div class="crev">${card.reversed && !card.broken ? '⟳ reversed' : ''}</div>
+        </div>
+      </div>
+    </div>
+    <div class="inline-reading" id="inline-${i}">
+      <div class="inline-card-name">${card.broken ? '...' : card.name}${card.reversed && !card.broken ? ' <span style="font-size:9px;color:var(--ember);font-style:italic;">⟳</span>' : ''}</div>
+      <div class="inline-tradition">${card.broken ? '...' : card.tradition}</div>
+      <div class="three-lines" id="lines-${i}"></div>
+    </div>
+  `;
+}
+
+function buildSpread(){
+  activePlanets=new Set();
+  deckPool = [...DECK].sort(()=>Math.random()-0.5); // Prepare the pool for anomalies
+  deck = deckPool.splice(0,3).map(c=>({...c, reversed:Math.random()<.25, broken:Math.random()<.12}));
+  revealed=[false,false,false]; drawnCards=[];
+  
+  const row=document.getElementById('spreadRow'); row.innerHTML='';
+
+  deck.forEach((card,i)=>{
+    const unit=document.createElement('div');
+    unit.className='card-unit loaded'; unit.id='cardWrap-' + i; unit.style.animationDelay=(i*0.2)+'s';
+    unit.innerHTML = createCardHTML(card, i);
+    row.appendChild(unit);
+  });
+  
+  setTimeout(() => {
+    deck.forEach((_, i) => {
+      const wrap = document.getElementById(`wrap-${i}`);
+      if (wrap) {
+        const skewX = (Math.random() - 0.5) * 24, skewY = (Math.random() - 0.5) * 24, rotation = (Math.random() - 0.5) * 14;
+        wrap.style.transform = `translate(${skewX}px, ${skewY}px) rotate(${rotation}deg)`;
+      }
+    });
+  }, 50);
+}
+
+async function flipCard(i) {
+  if(revealed[i]||(i>0&&!revealed[i-1])) return;
+  revealed[i]=true; 
+  
+  let card = deck[i];
+  const el = document.getElementById(`card-${i}`);
+  
+  el.classList.add('flipped');
+  if(card.reversed && !card.broken) el.classList.add('rev');
+  el.style.cursor = 'default';
+  
+  if(card.broken) {
+    await msDelay(1800 + Math.random()*1000); // The user stares into the glitch
+    el.classList.add('burning');
+    await msDelay(1200);
+    
+    // Draw a pure card from the pool to replace the anomaly
+    card = {...deckPool.pop(), reversed:Math.random()<.25, broken:false};
+    deck[i] = card; 
+    const unit = document.getElementById(`cardWrap-${i}`);
+    unit.style.opacity = 0;
+    await msDelay(500);
+    
+    unit.innerHTML = createCardHTML(card, i);
+    unit.style.opacity = 1;
+    
+    const newEl = document.getElementById(`card-${i}`);
+    await msDelay(400);
+    newEl.classList.add('flipped'); 
+    if(card.reversed) newEl.classList.add('rev'); 
+    newEl.style.cursor='default';
+  }
+  
+  drawnCards.push(card); 
+  activateConj(card.name);
+  setTimeout(()=>renderLines(i), 700);
+}
+
+function renderLines(i){
+  const card=deck[i];
+  document.getElementById(`inline-${i}`).classList.add('show');
+  const signs=[NATAL_USER.sun, NATAL_USER.moon, NATAL_USER.rising||NATAL_USER.sun];
+  const linesEl=document.getElementById(`lines-${i}`);
+  linesEl.innerHTML=signs.map(s=>`<p>${makeLine(s,card.name,card.reversed)}</p>`).join('');
+  linesEl.classList.add('loaded');
+  if(drawnCards.length === 3) setTimeout(renderSynthesis,500);
+}
+
+// ── ADJECTIVE DETECTION ──
+var ALL_ADJ_SET = null;
+function getAllAdjs(){
+  if(ALL_ADJ_SET) return ALL_ADJ_SET;
+  ALL_ADJ_SET = {};
+  Object.values(SIGN_ADJ).forEach(arr => arr.forEach(w => ALL_ADJ_SET[w]=1));
+  Object.values(CARD_ADJ).forEach(arr => arr.forEach(w => ALL_ADJ_SET[w]=1));
+  return ALL_ADJ_SET;
+}
+function isCharged(word){
+  var clean=word.toLowerCase().replace(/[^a-z-]/g,'');
+  var adjs=getAllAdjs();
+  if(adjs[clean]) return true;
+  if(clean.indexOf('-')>-1 && clean.length>5) return true;
+  return false;
+}
+
+var ARABIC="ابتثجحخدذرزسشصضطظعغفقكلمنهوي";
+function randArabic(){ return ARABIC[Math.floor(Math.random()*ARABIC.length)]; }
+function msDelay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function etchParagraph(el, text){
+  el.classList.add('visible'); el.innerHTML='';
+  var words=text.split(' '), rendered='';
+  for(var w=0;w<words.length;w++){
+    var word=words[w], clean=word.toLowerCase().replace(/[^a-z-]/g,''), charged=isCharged(clean);
+    if(charged){
+      el.innerHTML=rendered+'<span class="etch-cursor">▌</span>'; await msDelay(160+Math.floor(Math.random()*120));
+      var flickCount=6+Math.floor(Math.random()*6);
+      for(var f=0;f<flickCount;f++){
+        var ghost=word.split('').map(c=>c.match(/[a-zA-Z]/)?randArabic():c).join('');
+        el.innerHTML=rendered+'<span class="etch-ghost">'+ghost+'</span><span class="etch-cursor">▌</span>';
+        await msDelay(32+Math.floor(Math.random()*28));
+      }
+      el.innerHTML=rendered+'<span class="etch-ghost">'+word+'</span><span class="etch-cursor">▌</span>'; await msDelay(80+Math.floor(Math.random()*60));
+      rendered+='<span class="etch-word">'+word+'</span> '; el.innerHTML=rendered+'<span class="etch-cursor">▌</span>'; await msDelay(50+Math.floor(Math.random()*40));
+    } else {
+      rendered+=word+' '; el.innerHTML=rendered+'<span class="etch-cursor">▌</span>';
+      if(word.match(/[,;:—]/)) await msDelay(100+Math.floor(Math.random()*80));
+      else if(word.match(/[.!?]$/)){ el.innerHTML=rendered; await msDelay(480+Math.floor(Math.random()*200)); el.innerHTML=rendered+'<span class="etch-cursor">▌</span>'; await msDelay(60); }
+      else await msDelay(16+Math.floor(Math.random()*12));
+    }
+  }
+  el.innerHTML=rendered.trim();
+}
+
+async function renderSynthesis(){
+  var syn=document.getElementById('synthesisBlock'), container=document.getElementById('synthesisText');
+  syn.classList.add('show'); container.innerHTML='';
+  var paragraphs=makeSynthesisParagraphs(NATAL_USER,drawnCards);
+  
+  var paraEls=paragraphs.map(function(text){
+    var p=document.createElement('div'); p.className='synthesis-paragraph visible'; p.innerHTML=text;
+    container.appendChild(p); return p;
+  });
+
+  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">change the date</span>`;
+  const tempActions = document.createElement('span'); tempActions.className = 'inline-actions'; tempActions.style.opacity = '1'; tempActions.innerHTML = actionsHTML;
+  paraEls[paraEls.length - 1].appendChild(tempActions);
+
+  paraEls.forEach((p, i) => { p.classList.remove('visible'); p.setAttribute('data-text', paragraphs[i]); p.innerHTML = ''; });
+
+  await msDelay(800); 
+  for (let i = 0; i < paraEls.length; i++) {
+    await etchParagraph(paraEls[i], paraEls[i].getAttribute('data-text'));
+    await msDelay(800); 
+  }
+  
+  const activeActions = document.createElement('span'); activeActions.className = 'inline-actions'; activeActions.innerHTML = actionsHTML;
+  paraEls[paraEls.length - 1].appendChild(activeActions);
+}
+
+function makeSynthesisParagraphs(natal, drawn){
+  var single = makeSynthesis(natal, drawn);
+  var a1=pick(CARD_ADJ[drawn[0].name]||['present']), a2=pick(CARD_ADJ[drawn[1].name]||['still']), a3=pick(CARD_ADJ[drawn[2].name]||['unnamed']);
+  var sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
+  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it.';
+  return [single, p2];
+}
+</script>
+</body>
+</html>
