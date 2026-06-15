@@ -244,25 +244,8 @@ h1 { font-family: 'Cinzel', serif; font-size: clamp(18px, 4vw, 28px); font-weigh
 .etch-word{color:var(--gold);text-shadow:0 0 10px rgba(200,164,90,.5);animation:esettle 1.8s ease forwards;}
 @keyframes esettle{0%{color:var(--gold);text-shadow:0 0 18px rgba(200,164,90,.9)}70%{color:#e8cca0;text-shadow:0 0 4px rgba(200,164,90,.2)}100%{color:var(--cream);text-shadow:none}}
 
-/* ── THE SIN VERDICT BOX ── */
-.sin-verdict {
-  margin-top: 25px; padding: 16px 20px;
-  border: 1px solid rgba(140, 42, 42, 0.4);
-  background: linear-gradient(180deg, rgba(140, 42, 42, 0.05), transparent);
-  opacity: 0; transform: translateY(15px);
-  transition: opacity 1s cubic-bezier(.23,1,.32,1), transform 1s cubic-bezier(.23,1,.32,1);
-  display: flex; flex-direction: column; align-items: center;
-}
-.sin-verdict.boon { border-color: rgba(200, 164, 90, 0.4); background: linear-gradient(180deg, rgba(200, 164, 90, 0.05), transparent); }
-.sin-verdict.buff { border-color: rgba(120, 60, 180, 0.4); background: linear-gradient(180deg, rgba(120, 60, 180, 0.05), transparent); }
-.sin-verdict.visible { opacity: 1; transform: translateY(0); }
-.sin-header { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 12px; text-align: center; }
-.sin-verdict.boon .sin-header { color: var(--gold); }
-.sin-verdict.buff .sin-header { color: #a580c8; }
-.sin-verdict.curse .sin-header { color: var(--ember); }
-.sin-body { font-family: 'Cormorant Garamond', serif; font-size: 14px; line-height: 1.7; color: var(--cream); font-style: italic; text-align: center; width: 100%; }
-
-.inline-actions { opacity: 0; animation: fadeReveal 1.2s ease 0.6s forwards; display: block; margin-top: 15px; }
+/* ── INLINE ACTIONS ── */
+.inline-actions { opacity: 0; animation: fadeReveal 1.2s ease 0.6s forwards; display: flex; justify-content: center; align-items: center; margin-top: 10px; }
 .inline-action { color: rgba(200,164,90,.6); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-style: italic; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .1em; transition: color .3s, text-shadow .3s; }
 .inline-action:hover { color: var(--gold); text-shadow: 0 0 10px rgba(200,164,90,.5); }
 @keyframes fadeReveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -514,7 +497,7 @@ function calculateSinOutcome(drawn) {
   if (negativeCount === 1) type = 'buff';
   if (negativeCount >= 2) type = 'curse';
   
-  let title = type === 'boon' ? '✦ BOON OF ' : type === 'buff' ? '✧ BUFF OF ' : '⍼ CURSE OF ';
+  let title = type === 'boon' ? '✦ Boon of ' : type === 'buff' ? '✧ Buff of ' : '⍼ Curse of ';
   
   return { sin: dominantSin, type: type, title: title + dominantSin.toUpperCase(), text: SIN_MANIFESTATIONS[dominantSin][type] };
 }
@@ -526,12 +509,17 @@ function makeLine(chartSign,cardName,isReversed){
   if(isReversed){ const neg=['not quite','once','almost','barely','refusing to be']; cardAdj=pick(neg)+' '+cardAdj; }
   return pick(TEMPLATES_LINE).replace('{chart}',chartAdj).replace('{card}',cardAdj).replace('{sign}',chartSign);
 }
-function makeSynthesis(natal,drawn){
-  const tmpl=pick(TEMPLATES_SYNTHESIS);
-  const sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
-  const allAdjs=drawn.reduce((acc,c)=>acc.concat(CARD_ADJ[c.name]||['present']), []);
-  const ca1=pick(allAdjs), rest=allAdjs.filter(a=>a!==ca1), ca2=rest.length?pick(rest):pick(allAdjs);
-  return tmpl.replace('{sun}',natal.sun).replace('{sunAdj}',sunAdj).replace('{moon}',natal.moon).replace('{moonAdj}',moonAdj).replace('{cardAdj1}',ca1).replace('{cardAdj2}',ca2);
+
+function makeSynthesisParagraphs(natal, drawn){
+  var single = makeSynthesis(natal, drawn);
+  var a1=pick(CARD_ADJ[drawn[0].name]||['present']), a2=pick(CARD_ADJ[drawn[1].name]||['still']), a3=pick(CARD_ADJ[drawn[2].name]||['unnamed']);
+  var sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
+  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it.';
+  
+  var sinData = calculateSinOutcome(drawn);
+  var p3 = sinData.title + ' — ' + sinData.text;
+
+  return [single, p2, p3];
 }
 
 // ── NATAL STATE ────────────────────────────────────────────
@@ -814,33 +802,7 @@ async function renderSynthesis(){
     container.appendChild(p); return p;
   });
 
-  // Calculate The Sins
-  var sinData = calculateSinOutcome(drawnCards);
-  var sinBox = document.createElement('div');
-  sinBox.className = 'sin-verdict ' + sinData.type + ' visible';
-  
-  var sHead = document.createElement('div');
-  sHead.className = 'sin-header';
-  sHead.innerHTML = sinData.title;
-  sinBox.appendChild(sHead);
-  
-  var sBody = document.createElement('div');
-  sBody.className = 'sin-body';
-  sBody.innerHTML = sinData.text;
-  sinBox.appendChild(sBody);
-  
-  container.appendChild(sinBox);
-
-  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">✦ draw again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">change the date</span>`;
-  const tempActions = document.createElement('div'); tempActions.className = 'inline-actions'; tempActions.style.opacity = '1'; tempActions.innerHTML = actionsHTML;
-  sinBox.appendChild(tempActions);
-
-  // Return all elements to darkness for the etch animation
   paraEls.forEach((p, i) => { p.classList.remove('visible'); p.setAttribute('data-text', paragraphs[i]); p.innerHTML = ''; });
-  sinBox.classList.remove('visible');
-  sBody.setAttribute('data-text', sinData.text);
-  sBody.innerHTML = '';
-  tempActions.style.display = 'none';
 
   await msDelay(800); 
   for (let i = 0; i < paraEls.length; i++) {
@@ -848,21 +810,10 @@ async function renderSynthesis(){
     await msDelay(800); 
   }
   
-  // Reveal the Sin Verdict
-  sinBox.classList.add('visible');
-  await msDelay(600);
-  await etchParagraph(sBody, sBody.getAttribute('data-text'));
-  
-  // Reveal the final choices
-  tempActions.style.display = 'block';
-}
-
-function makeSynthesisParagraphs(natal, drawn){
-  var single = makeSynthesis(natal, drawn);
-  var a1=pick(CARD_ADJ[drawn[0].name]||['present']), a2=pick(CARD_ADJ[drawn[1].name]||['still']), a3=pick(CARD_ADJ[drawn[2].name]||['unnamed']);
-  var sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
-  var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it.';
-  return [single, p2];
+  const tempActions = document.createElement('div'); 
+  tempActions.className = 'inline-actions'; 
+  tempActions.innerHTML = ` <span class="inline-action" onclick="startRitual()">Again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">Change the date.</span>`;
+  container.appendChild(tempActions);
 }
 </script>
 </body>
