@@ -104,6 +104,7 @@ body::before {
 @keyframes strike { 0% { opacity: 0; transform: scale(1.5) translateY(-20px); filter: blur(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
 @keyframes blur-in-max { 0% { opacity: 0; filter: blur(20px); } 100% { opacity: 1; filter: blur(0); } }
 
+/* Combines the 1.25s blur entrance with a perpetual jitter */
 @keyframes blur-in-min-flicker {
   0% { opacity: 0; filter: blur(4px); }
   20% { opacity: 1; filter: blur(0); } 
@@ -135,7 +136,7 @@ body::before {
   .oracle-right { flex: 1; max-width: 650px; }
 }
 
-/* ── INTAKE ── */
+/* ── INTAKE (BALANCED HORROR & CINZEL) ── */
 .intake-title { 
   font-family: 'Onryou', 'Cinzel', serif; 
   font-size: clamp(34px, 8vw, 46px); 
@@ -499,7 +500,7 @@ function calculateSinOutcome(drawn) {
   
   let title = type === 'boon' ? '✦ Boon of ' : type === 'buff' ? '✧ Buff of ' : '⍼ Curse of ';
   
-  return { sin: dominantSin, type: type, title: title + dominantSin.toUpperCase(), text: SIN_MANIFESTATIONS[dominantSin][type] };
+  return title + dominantSin.toUpperCase() + " — " + SIN_MANIFESTATIONS[dominantSin][type];
 }
 
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
@@ -509,6 +510,13 @@ function makeLine(chartSign,cardName,isReversed){
   if(isReversed){ const neg=['not quite','once','almost','barely','refusing to be']; cardAdj=pick(neg)+' '+cardAdj; }
   return pick(TEMPLATES_LINE).replace('{chart}',chartAdj).replace('{card}',cardAdj).replace('{sign}',chartSign);
 }
+function makeSynthesis(natal,drawn){
+  const tmpl=pick(TEMPLATES_SYNTHESIS);
+  const sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
+  const allAdjs=drawn.reduce((acc,c)=>acc.concat(CARD_ADJ[c.name]||['present']), []);
+  const ca1=pick(allAdjs), rest=allAdjs.filter(a=>a!==ca1), ca2=rest.length?pick(rest):pick(allAdjs);
+  return tmpl.replace('{sun}',natal.sun).replace('{sunAdj}',sunAdj).replace('{moon}',natal.moon).replace('{moonAdj}',moonAdj).replace('{cardAdj1}',ca1).replace('{cardAdj2}',ca2);
+}
 
 function makeSynthesisParagraphs(natal, drawn){
   var single = makeSynthesis(natal, drawn);
@@ -516,8 +524,7 @@ function makeSynthesisParagraphs(natal, drawn){
   var sunAdj=pick(SIGN_ADJ[natal.sun]||['stone-built']), moonAdj=pick(SIGN_ADJ[natal.moon]||['oceanic']);
   var p2='The arc from '+drawn[0].name+' to '+drawn[2].name+' passes through '+drawn[1].name+'. '+a1+' becoming '+a2+', then '+a3+'. A '+sunAdj+' instinct meeting a '+moonAdj+' horizon. The chart already knew. The cards only confirmed it.';
   
-  var sinData = calculateSinOutcome(drawn);
-  var p3 = sinData.title + ' — ' + sinData.text;
+  var p3 = calculateSinOutcome(drawn);
 
   return [single, p2, p3];
 }
@@ -802,6 +809,10 @@ async function renderSynthesis(){
     container.appendChild(p); return p;
   });
 
+  const actionsHTML = ` <span class="inline-action" onclick="startRitual()">Again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">Change the date.</span>`;
+  const tempActions = document.createElement('div'); tempActions.className = 'inline-actions'; tempActions.style.opacity = '1'; tempActions.innerHTML = actionsHTML;
+  paraEls[paraEls.length - 1].appendChild(tempActions);
+
   paraEls.forEach((p, i) => { p.classList.remove('visible'); p.setAttribute('data-text', paragraphs[i]); p.innerHTML = ''; });
 
   await msDelay(800); 
@@ -810,10 +821,8 @@ async function renderSynthesis(){
     await msDelay(800); 
   }
   
-  const tempActions = document.createElement('div'); 
-  tempActions.className = 'inline-actions'; 
-  tempActions.innerHTML = ` <span class="inline-action" onclick="startRitual()">Again?</span> <span style="color:var(--gold-dim); margin:0 6px;">·</span> <span class="inline-action" onclick="resetToIntake()">Change the date.</span>`;
-  container.appendChild(tempActions);
+  const activeActions = document.createElement('div'); activeActions.className = 'inline-actions'; activeActions.innerHTML = actionsHTML;
+  paraEls[paraEls.length - 1].appendChild(activeActions);
 }
 </script>
 </body>
