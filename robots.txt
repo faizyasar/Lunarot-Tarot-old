@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://faizyasar.github.io/lunarot-tarot/sitemap.xml
