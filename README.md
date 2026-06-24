@@ -1,3 +1,15 @@
+# ⚠️ Deprecated Repository Notice
+
+This repository (**Lunarot-Tarot-old**) is old and is no longer maintained.
+
+It has been superseded by the superior **Lunarot-Tarot-Engine-1.0**:
+
+👉 https://github.com/faizyasar/Lunarot-Tarot-Engine-1.0
+
+Please use the new repository for the latest code and ongoing development.
+
+---
+
 Lunarot · Sacred Draw
 A digital tarot oracle fused with natal astrology, housed within a Y2K Japanese web-horror aesthetic. Enter your birth coordinates and witness the veil part — past, present, and future drawn from the stars and the cards.
 
@@ -32,11 +44,11 @@ Features
     Responsive design (mobile-first with desktop two-column ritual theater)
 
   Interactions & Architecture
-    Strict No-Scroll Embedded Layout: Absolute dimensional locking and dynamic CSS scaling (--c-scale) guarantee flawless integration into external sites (such as Carrd)        without viewport stretching or double-scrolling.
+    Strict No-Scroll Embedded Layout: Absolute dimensional locking and dynamic CSS scaling (--c-scale) guarantee flawless integration into external sites (such as Carrd)       without viewport stretching or double-scrolling.
     "Draw Again" to reshuffle without resetting birth data
     "Change the Date" to return to intake
   
-  Fully client-side!!!!!!!!!!!
+  Fully client-side!!!!!!!!!
     no backend, works offline after load
     Touch-friendly card flips
 
